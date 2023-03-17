@@ -9,6 +9,8 @@ public class Die {
     private static final int dieMinValue = 1;
     private static final int dieMaxValue = 6;
 
+    private Die() {}
+
     public static void roll() {
         dieOneRoll = DIE.nextInt(dieMinValue, dieMaxValue + 1);
         dieTwoRoll = DIE.nextInt(dieMinValue, dieMaxValue + 1);
