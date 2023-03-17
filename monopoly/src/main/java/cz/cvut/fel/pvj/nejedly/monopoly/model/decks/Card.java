@@ -1,4 +1,4 @@
-package cz.cvut.fel.pvj.nejedly.monopoly.model;
+package cz.cvut.fel.pvj.nejedly.monopoly.model.decks;
 
 public class Card {
     private final CardType cardType;

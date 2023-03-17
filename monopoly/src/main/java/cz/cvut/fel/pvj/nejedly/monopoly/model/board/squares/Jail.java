@@ -1,4 +1,4 @@
-package cz.cvut.fel.pvj.nejedly.monopoly.model;
+package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
 public class Jail extends Square {
 
