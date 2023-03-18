@@ -1,7 +1,7 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
 public enum PropertyGroup {
-    PURPLE,
+    BROWN,
     LIGHTBLUE,
     PINK,
     ORANGE,
