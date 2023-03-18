@@ -13,7 +13,7 @@ public class GoToJail extends Square {
     }
 
     @Override
-    boolean isOwnable() {
+    public boolean isOwnable() {
         return false;
     }
 }

@@ -15,7 +15,7 @@ public class Railroad extends Square implements Ownable {
     }
 
     @Override
-    boolean isOwnable() {
+    public boolean isOwnable() {
         return true;
     }
 

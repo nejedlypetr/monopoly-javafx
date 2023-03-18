@@ -33,7 +33,7 @@ public class Utility extends Square implements Ownable {
     }
 
     @Override
-    boolean isOwnable() {
+    public boolean isOwnable() {
         return true;
     }
 
