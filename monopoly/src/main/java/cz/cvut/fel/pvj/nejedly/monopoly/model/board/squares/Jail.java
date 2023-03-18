@@ -7,7 +7,7 @@ public class Jail extends Square {
     }
 
     @Override
-    boolean isOwnable() {
+    public boolean isOwnable() {
         return false;
     }
 }
