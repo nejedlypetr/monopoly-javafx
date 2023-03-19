@@ -1,6 +1,6 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
-import cz.cvut.fel.pvj.nejedly.monopoly.model.Player;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
 public class Property extends Square implements Ownable, Habitable {
     private final PropertyGroup group;

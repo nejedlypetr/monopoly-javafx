@@ -1,7 +1,7 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
-import cz.cvut.fel.pvj.nejedly.monopoly.model.Player;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Die;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.die.Die;
 
 public class Utility extends Square implements Ownable {
     private final int purchasePrice;
