@@ -1,4 +1,4 @@
-package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
+package cz.cvut.fel.pvj.nejedly.monopoly.model.board;
 
 import java.util.Random;
 
