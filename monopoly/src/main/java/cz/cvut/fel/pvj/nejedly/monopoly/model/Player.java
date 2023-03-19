@@ -1,14 +1,58 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model;
 
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
+
+import java.util.ArrayList;
+
 public class Player {
     private final String name;
-    private int position;
+    private int boardPosition;
     private int money;
+    private boolean isBankrupt;
+    private boolean isInJail;
+    private final ArrayList<Square> ownedSquares;
+    private final String spriteImage;
 
-    public Player(String name) {
+    public Player(String name, String spriteImage) {
         this.name = name;
-        position = 0;
+        this.spriteImage = spriteImage;
+        boardPosition = 0;
         money = 1_500;
+        isBankrupt = false;
+        isInJail = false;
+        ownedSquares = new ArrayList<>();
+    }
+
+    public void addOwnedSquare(Square square) {
+        if (!ownedSquares.contains(square)) {
+            ownedSquares.add(square);
+        }
+    }
+
+    public void removeOwnedSquare(Square square) {
+        if (ownedSquares.contains(square)) {
+            ownedSquares.remove(square);
+        }
+    }
+
+    public ArrayList<Square> getOwnedSquares() {
+        return ownedSquares;
+    }
+
+    public boolean isBankrupt() {
+        return isBankrupt;
+    }
+
+    public void setBankrupt(boolean bankrupt) {
+        isBankrupt = bankrupt;
+    }
+
+    public boolean isInJail() {
+        return isInJail;
+    }
+
+    public void setInJail(boolean inJail) {
+        isInJail = inJail;
     }
 
     public String getName() {
@@ -16,15 +60,19 @@ public class Player {
     }
 
     public int getPosition() {
-        return position;
+        return boardPosition;
     }
 
     public void setPosition(int position) {
-        this.position = position;
+        this.boardPosition = position;
     }
 
     public void advancePositionBy(int steps) {
-        this.position += steps;
+        this.boardPosition += steps; // todo: implement board range 0-39 squares
+    }
+
+    public void advancePositionTo(Square square) {
+        //todo: implement method
     }
 
     public int getMoney() {
