@@ -2,16 +2,24 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
 public abstract class Square {
     private String name;
-    private int position;
+    private int boardPosition;
     public abstract boolean isOwnable();
 
     public Square(String name, int position) {
         this.name = name;
-        this.position = position;
+        this.boardPosition = position;
     }
 
     @Override
     public String toString() {
-        return name + " (board position: " + position + ")";
+        return name + " (board position: " + boardPosition + ")";
+    }
+
+    public int getPosition() {
+        return boardPosition;
+    }
+
+    public String getName() {
+        return name;
     }
 }
