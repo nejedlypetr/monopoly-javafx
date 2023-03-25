@@ -3,32 +3,30 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.die;
 import java.util.Random;
 
 public class Die {
-    private static final Random DIE = new Random();
-    private static int dieOneRoll;
-    private static int dieTwoRoll;
-    private static final int dieMinValue = 1;
-    private static final int dieMaxValue = 6;
+    private final Random random = new Random();
+    private int dieOneRoll;
+    private int dieTwoRoll;
+    private final int dieMinValue = 1;
+    private final int dieMaxValue = 6;
 
-    private Die() {}
-
-    public static void roll() {
-        dieOneRoll = DIE.nextInt(dieMinValue, dieMaxValue + 1);
-        dieTwoRoll = DIE.nextInt(dieMinValue, dieMaxValue + 1);
+    public void roll() {
+        dieOneRoll = random.nextInt(dieMinValue, dieMaxValue + 1);
+        dieTwoRoll = random.nextInt(dieMinValue, dieMaxValue + 1);
     }
 
-    public static int getDieOneRoll() {
+    public int getDieOneRoll() {
         return dieOneRoll;
     }
 
-    public static int getDieTwoRoll() {
+    public int getDieTwoRoll() {
         return dieTwoRoll;
     }
 
-    public static int getDieRollTotal() {
+    public int getDieRollTotal() {
         return dieOneRoll + dieTwoRoll;
     }
 
-    public static boolean isDoubles() {
+    public boolean isDoubles() {
         return dieOneRoll == dieTwoRoll;
     }
 }
