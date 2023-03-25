@@ -15,7 +15,15 @@ public class Utility extends Square implements Ownable {
 
     @Override
     public int getRent() {
-        return 4 * Die.getDieRollTotal();
+        throw new UnsupportedOperationException("Method not supported without arguments.");
+    }
+
+    public int getRent(boolean doesOwnerOwnsBothUtilities, Die die) {
+        die.roll();
+        if (doesOwnerOwnsBothUtilities) {
+            return 10 * die.getDieRollTotal();
+        }
+        return 4 * die.getDieRollTotal();
     }
 
     @Override
