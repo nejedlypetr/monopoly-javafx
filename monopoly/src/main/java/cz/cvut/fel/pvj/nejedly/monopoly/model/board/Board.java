@@ -50,4 +50,8 @@ public class Board {
             new Property("Boardwalk", 39, PropertyGroup.BLUE, 50, 400)
         };
     }
+
+    public Square[] getBoardSquares() {
+        return boardSquares;
+    }
 }
