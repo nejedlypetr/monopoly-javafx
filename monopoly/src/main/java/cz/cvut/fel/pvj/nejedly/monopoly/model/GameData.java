@@ -8,14 +8,14 @@ import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
 import java.util.ArrayList;
 
-public class Game {
+public class GameData {
     private final Board board;
     private final ChanceDeck chanceDeck;
     private final CommunityChestDeck communityChestDeck;
     private final Die die;
     private final ArrayList<Player> players;
 
-    public Game(int numberOfPlayers) {
+    public GameData(int numberOfPlayers) {
         board = new Board();
         chanceDeck = new ChanceDeck();
         communityChestDeck = new CommunityChestDeck();
@@ -25,7 +25,7 @@ public class Game {
 
     private ArrayList<Player> configurePlayers(int numberOfPlayers) {
         if (numberOfPlayers < 2 || numberOfPlayers > 5) {
-            throw new IllegalArgumentException("Argument must be within range 2-5.");
+            throw new IllegalArgumentException("Number of players must be within range 2-5.");
         }
 
         String[] SPRITES = new String[]{"boot.png", "car.png", "dog.png", "hat.png", "ship.png", "iron.png"};
