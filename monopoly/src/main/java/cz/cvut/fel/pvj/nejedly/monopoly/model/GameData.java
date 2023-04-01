@@ -24,8 +24,8 @@ public class GameData {
     }
 
     private ArrayList<Player> configurePlayers(int numberOfPlayers) {
-        if (numberOfPlayers < 2 || numberOfPlayers > 5) {
-            throw new IllegalArgumentException("Number of players must be within range 2-5.");
+        if (numberOfPlayers < 2 || numberOfPlayers > 6) {
+            throw new IllegalArgumentException("The number of players must be within the range of 2-6.");
         }
 
         String[] SPRITES = new String[]{"boot.png", "car.png", "dog.png", "hat.png", "ship.png", "iron.png"};
