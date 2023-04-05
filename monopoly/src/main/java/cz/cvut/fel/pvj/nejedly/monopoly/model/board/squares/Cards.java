@@ -1,6 +1,6 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
-import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.CardType;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.CardType;
 
 public class Cards extends Square {
     private final CardType cardType;

@@ -1,5 +1,7 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.decks;
 
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
+
 import java.util.Random;
 
 public class Deck {

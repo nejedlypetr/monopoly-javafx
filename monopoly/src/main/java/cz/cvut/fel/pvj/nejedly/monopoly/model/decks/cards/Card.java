@@ -1,6 +1,6 @@
-package cz.cvut.fel.pvj.nejedly.monopoly.model.decks;
+package cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards;
 
-public class Card {
+public abstract class Card {
     private final CardType cardType;
     private final String text;
 

@@ -1,15 +1,10 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.decks;
 
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
+
 public class ChanceDeck extends Deck {
 
-    public ChanceDeck() {
-        super(
-            new Card[] {
-                new Card(CardType.CHANCE, "Dummy card1"),
-                new Card(CardType.CHANCE, "Dummy card2"),
-                new Card(CardType.CHANCE, "Dummy card3"),
-                new Card(CardType.CHANCE, "Dummy card4"),
-            }
-        );
+    public ChanceDeck(Card[] cards) {
+        super(cards);
     }
 }
