@@ -16,7 +16,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         Stage stage = new Stage();
 
-
         MenuView gameMenu = new MenuView();
         gameMenu.init();
         Scene gameMenuScene = gameMenu.getScene();
