@@ -1,6 +1,7 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ public class Player {
     private boolean isInJail;
     private final ArrayList<Square> ownedSquares;
     private final String spriteImage;
+    private ArrayList<GetOutOfJailFreeCard> getOutOfJailFreeCards;
 
     public Player(String name, String spriteImage) {
         this.name = name;
@@ -21,6 +23,7 @@ public class Player {
         isBankrupt = false;
         isInJail = false;
         ownedSquares = new ArrayList<>();
+        getOutOfJailFreeCards = new ArrayList<>();
     }
 
     public void addOwnedSquare(Square square) {
@@ -77,5 +80,17 @@ public class Player {
 
     public int getMoney() {
         return money;
+    }
+
+    public int getBoardPosition() {
+        return boardPosition;
+    }
+
+    public String getSpriteImage() {
+        return spriteImage;
+    }
+
+    public ArrayList<GetOutOfJailFreeCard> getGetOutOfJailFreeCards() {
+        return getOutOfJailFreeCards;
     }
 }
