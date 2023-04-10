@@ -1,28 +1,32 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 
 public class Player {
     private final String name;
-    private int boardPosition;
-    private int money;
+    private SimpleIntegerProperty boardPosition;
+    private final SimpleIntegerProperty money;
     private boolean isBankrupt;
     private boolean isInJail;
-    private final ArrayList<Square> ownedSquares;
+    private final ObservableList<Square> ownedSquares;
     private final String spriteImage;
     private ArrayList<GetOutOfJailFreeCard> getOutOfJailFreeCards;
 
     public Player(String name, String spriteImage) {
         this.name = name;
         this.spriteImage = spriteImage;
-        boardPosition = 0;
-        money = 1_500;
+        boardPosition = new SimpleIntegerProperty(0);
+        money = new SimpleIntegerProperty(1_500);
         isBankrupt = false;
         isInJail = false;
-        ownedSquares = new ArrayList<>();
+        ownedSquares = FXCollections.observableArrayList();
         getOutOfJailFreeCards = new ArrayList<>();
     }
 
@@ -33,12 +37,10 @@ public class Player {
     }
 
     public void removeOwnedSquare(Square square) {
-        if (ownedSquares.contains(square)) {
-            ownedSquares.remove(square);
-        }
+        ownedSquares.remove(square);
     }
 
-    public ArrayList<Square> getOwnedSquares() {
+    public ObservableList<Square> getOwnedSquares() {
         return ownedSquares;
     }
 
@@ -62,28 +64,24 @@ public class Player {
         return name;
     }
 
-    public int getPosition() {
+    public SimpleIntegerProperty getBoardPosition() {
         return boardPosition;
     }
 
-    public void setPosition(int position) {
-        this.boardPosition = position;
+    public void setBoardPosition(int boardPosition) {
+        this.boardPosition.set(boardPosition);
     }
 
     public void advancePositionBy(int steps) {
-        this.boardPosition += steps; // todo: implement board range 0-39 squares
+        this.boardPosition.set(boardPosition.getValue() + steps); // todo: implement board range 0-39 squares
     }
 
     public void advancePositionTo(Square square) {
         //todo: implement method
     }
 
-    public int getMoney() {
+    public SimpleIntegerProperty getMoney() {
         return money;
-    }
-
-    public int getBoardPosition() {
-        return boardPosition;
     }
 
     public String getSpriteImage() {
@@ -93,4 +91,23 @@ public class Player {
     public ArrayList<GetOutOfJailFreeCard> getGetOutOfJailFreeCards() {
         return getOutOfJailFreeCards;
     }
+
+    public int getNumberOfOwnedUtilities() {
+        int numberOfOwnedUtilities = 0;
+        for (Square square : ownedSquares) {
+            if (square instanceof Utility) {
+                numberOfOwnedUtilities++;
+            }
+        }
+        return numberOfOwnedUtilities;
+    }
+
+    public boolean addCardToGetOutOfJailFreeCards(GetOutOfJailFreeCard card) {
+        return getOutOfJailFreeCards.add(card);
+    }
+
+    public void changeMoneyBalanceBy(int amount) {
+        money.set(money.get() + amount);
+    }
+
 }
