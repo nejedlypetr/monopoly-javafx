@@ -1,32 +1,44 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.die;
 
+import javafx.beans.property.SimpleIntegerProperty;
+
 import java.util.Random;
 
 public class Die {
     private final Random random = new Random();
-    private int dieOneRoll;
-    private int dieTwoRoll;
+    private final SimpleIntegerProperty dieOneRoll;
+    private final SimpleIntegerProperty dieTwoRoll;
     private final int dieMinValue = 1;
     private final int dieMaxValue = 6;
 
-    public void roll() {
-        dieOneRoll = random.nextInt(dieMinValue, dieMaxValue + 1);
-        dieTwoRoll = random.nextInt(dieMinValue, dieMaxValue + 1);
+    public Die() {
+        dieOneRoll = new SimpleIntegerProperty(0);
+        dieTwoRoll = new SimpleIntegerProperty(0);
     }
 
-    public int getDieOneRoll() {
+    public void roll() {
+        dieOneRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
+        dieTwoRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
+    }
+
+    public SimpleIntegerProperty getDieOneRoll() {
         return dieOneRoll;
     }
 
-    public int getDieTwoRoll() {
+    public SimpleIntegerProperty getDieTwoRoll() {
         return dieTwoRoll;
     }
 
     public int getDieRollTotal() {
-        return dieOneRoll + dieTwoRoll;
+        return dieOneRoll.add(dieTwoRoll).intValue();
     }
 
     public boolean isDoubles() {
         return dieOneRoll == dieTwoRoll;
+    }
+
+    @Override
+    public String toString() {
+        return dieOneRoll.getValue()+" + "+dieTwoRoll.getValue()+" = "+getDieRollTotal();
     }
 }
