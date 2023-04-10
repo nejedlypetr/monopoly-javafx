@@ -1,26 +1,23 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Board;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.ChanceDeck;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.CommunityChestDeck;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.die.Die;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.ArrayList;
 
-public class GameData {
-    private final Board board;
-    private final ChanceDeck chanceDeck;
-    private final CommunityChestDeck communityChestDeck;
-    private final Die die;
-    private final ArrayList<Player> players;
+public class GameModel {
+    private Board board;
+    private Die die;
+    private ArrayList<Player> players;
+    private final SimpleObjectProperty<Player> activePlayer;
 
-    public GameData(int numberOfPlayers) {
+    public GameModel() {
         board = new Board();
-        chanceDeck = new ChanceDeck();
-        communityChestDeck = new CommunityChestDeck();
         die = new Die();
-        players = configurePlayers(numberOfPlayers);
+        players = new ArrayList<>();
+        activePlayer = new SimpleObjectProperty<>();
     }
 
     private ArrayList<Player> configurePlayers(int numberOfPlayers) {
@@ -33,6 +30,10 @@ public class GameData {
         for (int i = 1; i <= numberOfPlayers; i++) {
             listOfPlayers.add(new Player("Player " + i, SPRITES[i-1]));
         }
+
+        // choose a player that will be starting
+        activePlayer.set(listOfPlayers.get(0));
+
         return listOfPlayers;
     }
 
@@ -40,15 +41,25 @@ public class GameData {
         return board;
     }
 
-    public ChanceDeck getChanceDeck() {
-        return chanceDeck;
-    }
-
-    public CommunityChestDeck getCommunityChestDeck() {
-        return communityChestDeck;
-    }
-
     public Die getDie() {
         return die;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void startNewGame(int numberOfPlayers) {
+        players = configurePlayers(numberOfPlayers);
+        board = new Board();
+        die = new Die();
+    }
+
+    public Player getActivePlayer() {
+        return activePlayer.get();
+    }
+
+    public SimpleObjectProperty<Player> activePlayerProperty() {
+        return activePlayer;
     }
 }
