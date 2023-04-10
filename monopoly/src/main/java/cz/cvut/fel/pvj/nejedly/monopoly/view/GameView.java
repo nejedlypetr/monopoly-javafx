@@ -1,8 +1,10 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.view;
 
+import cz.cvut.fel.pvj.nejedly.monopoly.controller.GameController;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.die.Die;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
@@ -17,6 +19,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 public class GameView {
+    private final GameModel gameModel;
+    private final GameController controller;
     private final Scene scene;
     private final BorderPane pane;
     private final ImageView boardImageView;
@@ -26,11 +30,15 @@ public class GameView {
     private final Button sellButton;
     private final Button saveGameButton;
 
-    public GameView() {
+    public GameView(GameModel gameModel, GameController gameController) {
+        this.gameModel = gameModel;
+        controller = gameController;
+
         pane = new BorderPane();
         scene = new Scene(pane);
         boardImageView = createImage("/images/board.jpg", 700);;
         rollButton = new Button("ROLL DICE");
+        rollButton.setOnAction(actionEvent -> controller.rollButtonPressed());
         endTurnButton = new Button("END TURN");
         purchaseButton = new Button("PURCHASE PROPERTY");
         sellButton = new Button("SELL PROPERTY");
@@ -47,9 +55,9 @@ public class GameView {
     }
 
     private void initBorderPaneCenter() {
-        HBox player = createCurrentPlayerLabel(new Player("Player 2", "boot.png"));
+        HBox player = createCurrentPlayerLabel();
         VBox square = createSquareInformationBox(new Property("House", 3, PropertyGroup.GREEN, 3, 2));
-        VBox roll = createRollInformationBox(new Die());
+        VBox roll = createRollInformationBox();
 
         HBox controls1 = new HBox(rollButton, endTurnButton);
         controls1.setAlignment(Pos.CENTER);
@@ -65,10 +73,11 @@ public class GameView {
         pane.setCenter(center);
     }
 
-    private VBox createRollInformationBox(Die die) {
+    private VBox createRollInformationBox() {
         Label label = new Label("LAST DICE ROLL");
         label.setId("heading3");
-        Label description = new Label(die.toString());
+        Label description = new Label();
+        description.textProperty().bind(Bindings.createStringBinding(() -> gameModel.getDie().toString(), gameModel.getDie().getDieOneRoll(), gameModel.getDie().getDieTwoRoll()));
 
         VBox vBox = new VBox(label, description);
         vBox.setAlignment(Pos.CENTER);
@@ -78,7 +87,8 @@ public class GameView {
     private VBox createSquareInformationBox(Square square) {
         Label label = new Label("CURRENT SQUARE");
         label.setId("heading3");
-        Label description = new Label(square.toString());
+        Label description = new Label();
+        description.textProperty().bind(Bindings.createStringBinding(() -> gameModel.getBoard().getBoardSquares()[gameModel.getActivePlayer().getBoardPosition().getValue()].toString()));
 
         VBox vBox = new VBox(label, description);
         vBox.setAlignment(Pos.TOP_CENTER);
@@ -86,10 +96,10 @@ public class GameView {
         return vBox;
     }
 
-    private HBox createCurrentPlayerLabel(Player player) {
-        ImageView avatar = createImage("/sprites/ship.png", 40);
+    private HBox createCurrentPlayerLabel() {
+        ImageView avatar = createImage("/sprites/" + gameModel.getActivePlayer().getSpriteImage(), 40);
 
-        Label playerName = new Label(" "+player.getName()+"'s turn");
+        Label playerName = new Label(" "+gameModel.getActivePlayer().getName()+"'s turn");
         playerName.setId("playerName");
 
         HBox hBox = new HBox(avatar, playerName);
@@ -98,37 +108,29 @@ public class GameView {
     }
 
     private void initBorderPaneBottom() {
-        VBox p1 = createPlayerInfoBox(new Player("Player 1", "boot.png"));
-        VBox p2 = createPlayerInfoBox(new Player("Player 2", "boot.png"));
-        VBox p3 = createPlayerInfoBox(new Player("Player 3", "boot.png"));
-        VBox p4 = createPlayerInfoBox(new Player("Player 4", "boot.png"));
-        VBox p5 = createPlayerInfoBox(new Player("Player 5", "boot.png"));
-        VBox p6 = createPlayerInfoBox(new Player("Player 6", "boot.png"));
-
-        HBox bottom = new HBox(p1, p2, p3, p4);
+        HBox bottom = new HBox();
+        for (Player player : gameModel.getPlayers()) {
+            VBox playerInfoBox = createPlayerInfoBox(player);
+            bottom.getChildren().add(playerInfoBox);
+        }
         pane.setBottom(bottom);
     }
 
     private VBox createPlayerInfoBox(Player player) {
-        ImageView avatar = createImage("/sprites/boot.png", 30);
+        ImageView avatar = createImage("/sprites/"+player.getSpriteImage(), 30);
         Label label = new Label(" "+player.getName()+" - ");
-        Label money = new Label(player.getMoney()+"$");
+//        Label money = new Label(player.getMoney()+"$");
+
+        Label money = new Label();
+        money.textProperty().bind(Bindings.concat("$", player.getMoney().asString()));
+
         HBox playerInfo = new HBox(avatar, label, money);
         playerInfo.setPadding(new Insets(0, 0, 5, 5));
 
         TableView<Square> table = createEmptyTableView();
         table.setMaxHeight(130);
         table.setSelectionModel(null);
-
-        // dummy data
-        table.getItems().add(new Property("Charles University", 0, PropertyGroup.BLUE, 23, 10));
-        table.getItems().add(new Property("Charles University", 0, PropertyGroup.BLUE, 23, 10));
-        table.getItems().add(new Property("Charles University", 0, PropertyGroup.BLUE, 23, 10));
-        table.getItems().add(new Property("Charles University", 0, PropertyGroup.BLUE, 23, 10));
-        table.getItems().add(new Property("Charles University", 0, PropertyGroup.BLUE, 23, 10));
-        table.getItems().add(new Property("Charles University", 0, PropertyGroup.BLUE, 23, 10));
-        table.getItems().add(new Utility("Utility 1", 2));
-        table.getItems().add(new Railroad("Railroad 12", 2));
+        table.setItems(player.getOwnedSquares());
 
         VBox infoBox = new VBox(playerInfo, table);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
@@ -142,6 +144,11 @@ public class GameView {
         TableColumn<Square, Number> priceColumn = new TableColumn<>("Price");
         TableColumn<Square, String> rentColumn = new TableColumn<>("Rent");
         TableColumn<Square, String> colorColumn = new TableColumn<>("Color");
+
+        nameColumn.setSortable(false);
+        priceColumn.setSortable(false);
+        rentColumn.setSortable(false);
+        colorColumn.setSortable(false);
 
         nameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
@@ -162,7 +169,7 @@ public class GameView {
             if (square instanceof Property property) {
                 return new SimpleStringProperty(Integer.toString(property.getRent()));
             } else if (square instanceof Utility) {
-                return new SimpleStringProperty("5 * (die value)");
+                return new SimpleStringProperty("5 * (dice roll)");
             } else if (square instanceof Railroad railroad) {
                 return new SimpleStringProperty(Integer.toString(railroad.getRent()));
             }
