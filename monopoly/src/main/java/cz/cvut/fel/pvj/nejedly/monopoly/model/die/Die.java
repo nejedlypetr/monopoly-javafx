@@ -16,9 +16,10 @@ public class Die {
         dieTwoRoll = new SimpleIntegerProperty(0);
     }
 
-    public void roll() {
+    public int roll() {
         dieOneRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
         dieTwoRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
+        return getDieRollTotal();
     }
 
     public SimpleIntegerProperty getDieOneRoll() {
@@ -34,7 +35,7 @@ public class Die {
     }
 
     public boolean isDoubles() {
-        return dieOneRoll == dieTwoRoll;
+        return dieOneRoll.getValue().equals(dieTwoRoll.getValue());
     }
 
     @Override
