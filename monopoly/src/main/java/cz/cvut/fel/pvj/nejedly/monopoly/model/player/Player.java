@@ -73,7 +73,7 @@ public class Player {
     }
 
     public void advancePositionBy(int steps) {
-        this.boardPosition.set(boardPosition.getValue() + steps); // todo: implement board range 0-39 squares
+        boardPosition.set((boardPosition.getValue() + steps) % 40);
     }
 
     public void advancePositionTo(Square square) {
