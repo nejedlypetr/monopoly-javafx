@@ -4,7 +4,7 @@
 }
 
 #playerName {
-    -fx-font-size: 35;
+    -fx-font-size: 25;
     -fx-text-fill: black;
 }
 
@@ -13,7 +13,7 @@
 }
 
 .label {
-    -fx-font-size: 20;
+    -fx-font-size: 18;
 }
 
 .button {
@@ -34,10 +34,11 @@
 
 .table-view {
     -fx-border-color: #EA2227;
-    -fx-border-width: 0 4 4 4;
+    -fx-border-width: 4;
     -fx-background-insets: 0;
     -fx-padding: 0;
     -fx-background-color: #CDE6D0;
+    -fx-border-radius: 10;
 }
 
 .table-view .column-header,
