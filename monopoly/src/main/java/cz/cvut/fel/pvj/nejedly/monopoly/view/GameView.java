@@ -4,6 +4,7 @@ import cz.cvut.fel.pvj.nejedly.monopoly.controller.GameController;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +19,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class GameView {
     private final GameModel gameModel;
     private final GameController controller;
@@ -29,6 +34,7 @@ public class GameView {
     private final Button purchaseButton;
     private final Button sellButton;
     private final Button saveGameButton;
+    private final HashMap<String, ImageView> sprites;
 
     public GameView(GameModel gameModel, GameController gameController) {
         this.gameModel = gameModel;
@@ -36,41 +42,52 @@ public class GameView {
 
         pane = new BorderPane();
         scene = new Scene(pane);
-        boardImageView = createImage("/images/board.jpg", 700);;
+        boardImageView = createImage("/images/board.jpg", 850);;
         rollButton = new Button("ROLL DICE");
         rollButton.setOnAction(actionEvent -> controller.rollButtonPressed());
         endTurnButton = new Button("END TURN");
-        purchaseButton = new Button("PURCHASE PROPERTY");
+        endTurnButton.setOnAction(actionEvent -> controller.endTurnButtonPressed());
+        purchaseButton = new Button("BUY PROPERTY");
         sellButton = new Button("SELL PROPERTY");
         saveGameButton = new Button("SAVE GAME & EXIT");
+        sprites = createSpriteImageViews();
     }
 
     public void init() {
         scene.getStylesheets().add("/stylesheets/GameViewStyles.css");
-        pane.setPrefSize(1400, 875);
-
+        pane.setPrefSize(1450, 850);
         initBorderPaneLeft();
         initBorderPaneCenter();
-        initBorderPaneBottom();
+        initBorderPaneRight();
+    }
+
+    private HashMap<String, ImageView> createSpriteImageViews() {
+        HashMap<String, ImageView> sprites = new HashMap<>();
+
+        for (Player player : gameModel.getPlayers()) {
+            ImageView sprite = new ImageView(new Image("sprites/"+player.getSpriteImage()));
+            sprite.setPreserveRatio(true);
+            sprite.prefHeight(35);
+
+            int[] spriteBoardPosition = controller.calculateSpritePositionOnBoard(player.getBoardPosition().get());
+            sprite.setX(spriteBoardPosition[0]);
+            sprite.setY(spriteBoardPosition[1]);
+
+            sprites.put(player.getName(), sprite);
+        }
+
+        return sprites;
     }
 
     private void initBorderPaneCenter() {
-        HBox player = createCurrentPlayerLabel();
-        VBox square = createSquareInformationBox(new Property("House", 3, PropertyGroup.GREEN, 3, 2));
-        VBox roll = createRollInformationBox();
-
-        HBox controls1 = new HBox(rollButton, endTurnButton);
-        controls1.setAlignment(Pos.CENTER);
-        controls1.setSpacing(30);
-
-        HBox controls2 = new HBox(purchaseButton, sellButton);
-        controls2.setAlignment(Pos.CENTER);
-        controls2.setSpacing(30);
-
-        VBox center = new VBox(player, square, roll, controls1, controls2, saveGameButton);
-        center.setAlignment(Pos.CENTER);
-        center.setSpacing(30);
+        Pane center = new Pane();
+        center.setMaxSize(850, 850);
+        center.getChildren().add(boardImageView);
+        for (ImageView spriteImageView : sprites.values()) {
+            center.getChildren().add(spriteImageView);
+        }
         pane.setCenter(center);
+        BorderPane.setAlignment(center, Pos.CENTER_LEFT);
     }
 
     private VBox createRollInformationBox() {
@@ -88,53 +105,83 @@ public class GameView {
         Label label = new Label("CURRENT SQUARE");
         label.setId("heading3");
         Label description = new Label();
-        description.textProperty().bind(Bindings.createStringBinding(() -> gameModel.getBoard().getBoardSquares()[gameModel.getActivePlayer().getBoardPosition().getValue()].toString()));
+
+        List<Observable> observables = new ArrayList<>();
+        observables.add(gameModel.getActivePlayerProperty());
+        for (Player player : gameModel.getPlayers()) {
+            observables.add(player.getBoardPosition());
+        }
+
+        description.textProperty().bind(Bindings.createStringBinding(() -> {
+            int squarePosition = gameModel.getActivePlayer().getBoardPosition().getValue();
+            return gameModel.getBoard().getBoardSquares()[squarePosition].toString();
+        }, observables.toArray(new Observable[0])));
 
         VBox vBox = new VBox(label, description);
         vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setPrefHeight(150);
+        vBox.setPrefHeight(250);
         return vBox;
     }
 
     private HBox createCurrentPlayerLabel() {
-        ImageView avatar = createImage("/sprites/" + gameModel.getActivePlayer().getSpriteImage(), 40);
+        ImageView avatar = new ImageView();
+        avatar.setFitWidth(40);
+        avatar.setPreserveRatio(true);
+        avatar.imageProperty().bind(Bindings.createObjectBinding(() ->
+            new Image("/sprites/" + gameModel.getActivePlayer().getSpriteImage()),
+            gameModel.getActivePlayerProperty()
+        ));
 
-        Label playerName = new Label(" "+gameModel.getActivePlayer().getName()+"'s turn");
+        Label playerName = new Label();
         playerName.setId("playerName");
+        playerName.textProperty().bind(Bindings.createStringBinding(
+            () -> " " + gameModel.getActivePlayer().getName() + "'s turn",
+            gameModel.getActivePlayerProperty()
+        ));
 
         HBox hBox = new HBox(avatar, playerName);
         hBox.setAlignment(Pos.CENTER);
         return hBox;
     }
 
-    private void initBorderPaneBottom() {
-        HBox bottom = new HBox();
-        for (Player player : gameModel.getPlayers()) {
-            VBox playerInfoBox = createPlayerInfoBox(player);
-            bottom.getChildren().add(playerInfoBox);
-        }
-        pane.setBottom(bottom);
+    private void initBorderPaneRight() {
+        HBox player = createCurrentPlayerLabel();
+        VBox square = createSquareInformationBox(new Property("House", 3, PropertyGroup.GREEN, 3, 2));
+        VBox roll = createRollInformationBox();
+
+        VBox saveButton = new VBox(saveGameButton);
+        saveButton.setPadding(new Insets(60, 0, 0, 0));
+        saveButton.setAlignment(Pos.CENTER);
+
+        VBox right = new VBox(player, roll, rollButton, endTurnButton, square, purchaseButton, sellButton, saveButton);
+        right.setAlignment(Pos.CENTER);
+        right.setSpacing(30);
+        right.setMaxWidth(300);
+        right.setPrefWidth(300);
+
+        pane.setRight(right);
     }
 
     private VBox createPlayerInfoBox(Player player) {
         ImageView avatar = createImage("/sprites/"+player.getSpriteImage(), 30);
         Label label = new Label(" "+player.getName()+" - ");
-//        Label money = new Label(player.getMoney()+"$");
 
         Label money = new Label();
         money.textProperty().bind(Bindings.concat("$", player.getMoney().asString()));
 
         HBox playerInfo = new HBox(avatar, label, money);
-        playerInfo.setPadding(new Insets(0, 0, 5, 5));
+        playerInfo.setPadding(new Insets(5, 0, 5, 0));
+        playerInfo.setAlignment(Pos.CENTER);
 
         TableView<Square> table = createEmptyTableView();
-        table.setMaxHeight(130);
+        table.setMaxWidth(290);
         table.setSelectionModel(null);
         table.setItems(player.getOwnedSquares());
 
-        VBox infoBox = new VBox(playerInfo, table);
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
-        return infoBox;
+        VBox playerInfoBox = new VBox(playerInfo, table);
+        playerInfoBox.setAlignment(Pos.CENTER);
+
+        return playerInfoBox;
     }
 
     private TableView<Square> createEmptyTableView() {
@@ -193,11 +240,15 @@ public class GameView {
     }
 
     private void initBorderPaneLeft() {
-        Pane left = new Pane();
-        left.setMaxSize(700, 700);
-        left.getChildren().add(boardImageView);
-        // todo add players sprites
+        VBox left = new VBox();
+        left.setPrefSize(300, 845);
+        left.setMaxSize(300, 845);
+        for (Player player : gameModel.getPlayers()) {
+            VBox playerInfoBox = createPlayerInfoBox(player);
+            left.getChildren().add(playerInfoBox);
+        }
         pane.setLeft(left);
+        BorderPane.setAlignment(left, Pos.TOP_CENTER);
     }
 
     private ImageView createImage(String uri, double width) {
@@ -210,5 +261,17 @@ public class GameView {
 
     public Scene getScene() {
         return scene;
+    }
+
+    public Button getRollButton() {
+        return rollButton;
+    }
+
+    public HashMap<String, ImageView> getSprites() {
+        return sprites;
+    }
+
+    public Button getEndTurnButton() {
+        return endTurnButton;
     }
 }
