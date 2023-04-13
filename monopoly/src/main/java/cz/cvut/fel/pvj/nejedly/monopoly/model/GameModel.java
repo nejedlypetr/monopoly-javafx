@@ -20,6 +20,12 @@ public class GameModel {
         activePlayer = new SimpleObjectProperty<>();
     }
 
+    public void setNextPlayerAsActive() {
+        int currentIndex = players.indexOf(activePlayer.get());
+        currentIndex = (currentIndex + 1) % players.size();
+        activePlayer.set(players.get(currentIndex));
+    }
+
     private ArrayList<Player> configurePlayers(int numberOfPlayers) {
         if (numberOfPlayers < 2 || numberOfPlayers > 6) {
             throw new IllegalArgumentException("The number of players must be within the range of 2-6.");
@@ -31,7 +37,7 @@ public class GameModel {
             listOfPlayers.add(new Player("Player " + i, SPRITES[i-1]));
         }
 
-        // choose a player that will be starting
+        // choose a player that will start
         activePlayer.set(listOfPlayers.get(0));
 
         return listOfPlayers;
@@ -59,7 +65,7 @@ public class GameModel {
         return activePlayer.get();
     }
 
-    public SimpleObjectProperty<Player> activePlayerProperty() {
+    public SimpleObjectProperty<Player> getActivePlayerProperty() {
         return activePlayer;
     }
 }
