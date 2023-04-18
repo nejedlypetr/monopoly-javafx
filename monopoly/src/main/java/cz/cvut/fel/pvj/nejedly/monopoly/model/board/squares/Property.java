@@ -36,10 +36,6 @@ public class Property extends Square implements Ownable, Habitable {
         return purchasePrice;
     }
 
-    public void setOwner(Player player) {
-        owner = player;
-    }
-
     public Player getOwner() {
         return owner;
     }
@@ -51,5 +47,20 @@ public class Property extends Square implements Ownable, Habitable {
     @Override
     public boolean isHabitable() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        String ownerText = (owner == null) ? "---" : owner.getName();
+        return getName() + System.lineSeparator() + System.lineSeparator() +
+                "Owner: " + ownerText + System.lineSeparator() +
+                "Rent: $" + rent + System.lineSeparator() +
+                "Purchase price: $" + purchasePrice + System.lineSeparator() +
+                "Group: " + group;
+    }
+
+    @Override
+    public void setOwner(Player player) {
+        owner = player;
     }
 }
