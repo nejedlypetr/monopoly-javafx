@@ -1,7 +1,6 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -30,10 +29,14 @@ public class Player {
         getOutOfJailFreeCards = new ArrayList<>();
     }
 
-    public void addOwnedSquare(Square square) {
-        if (!ownedSquares.contains(square)) {
-            ownedSquares.add(square);
+    public boolean purchaseSquare(Square square) {
+        if (!(square instanceof Ownable ownable) || ownedSquares.contains(square)) return false;
+        if (!ownable.isOwned() && money.get() >= ownable.getPurchasePrice()) {
+            changeMoneyBalanceBy(-ownable.getPurchasePrice());
+            ownable.setOwner(this);
+            return ownedSquares.add(square);
         }
+        return false;
     }
 
     public void removeOwnedSquare(Square square) {
@@ -100,6 +103,16 @@ public class Player {
             }
         }
         return numberOfOwnedUtilities;
+    }
+
+    public int getNumberOfOwnedRailroads() {
+        int numberOfOwnedRailroads = 0;
+        for (Square square : ownedSquares) {
+            if (square instanceof Railroad) {
+                numberOfOwnedRailroads++;
+            }
+        }
+        return numberOfOwnedRailroads;
     }
 
     public boolean addCardToGetOutOfJailFreeCards(GetOutOfJailFreeCard card) {
