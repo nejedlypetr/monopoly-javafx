@@ -50,7 +50,18 @@ public class Utility extends Square implements Ownable {
         return owner;
     }
 
-    public void setOwner(Player owner) {
-        this.owner = owner;
+    @Override
+    public void setOwner(Player player) {
+        owner = player;
+    }
+
+    @Override
+    public String toString() {
+        String ownerText = (owner == null) ? "---" : owner.getName();
+        return getName() + System.lineSeparator() + System.lineSeparator() +
+                "Owner: " + ownerText + System.lineSeparator() +
+                "Rent 1: $(dice * 4)" + System.lineSeparator() +
+                "Rent 2: $(dice * 10)" + System.lineSeparator() +
+                "Purchase price: $" + purchasePrice;
     }
 }
