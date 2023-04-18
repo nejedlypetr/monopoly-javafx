@@ -48,6 +48,7 @@ public class GameView {
         endTurnButton = new Button("END TURN");
         endTurnButton.setOnAction(actionEvent -> controller.endTurnButtonPressed());
         purchaseButton = new Button("BUY PROPERTY");
+        purchaseButton.setOnAction(actionEvent -> controller.purchasePropertyButtonPressed());
         sellButton = new Button("SELL PROPERTY");
         saveGameButton = new Button("SAVE GAME & EXIT");
         sprites = createSpriteImageViews();

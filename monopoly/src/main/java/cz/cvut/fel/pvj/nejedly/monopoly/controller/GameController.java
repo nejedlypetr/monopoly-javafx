@@ -1,6 +1,7 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.controller;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.GameView;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.MenuView;
@@ -52,6 +53,14 @@ public class GameController {
     public void endTurnButtonPressed() {
         gameModel.setNextPlayerAsActive();
         gameView.getRollButton().setDisable(false);
+    }
+
+    public void purchasePropertyButtonPressed() {
+        Player activePlayer = gameModel.getActivePlayer();
+        int position = activePlayer.getBoardPosition().get();
+        Square square = gameModel.getBoard().getBoardSquares()[position];
+
+        gameModel.getActivePlayer().purchaseSquare(square);
     }
 
     private void advancePlayerPositionBy(Player player, int steps) {
