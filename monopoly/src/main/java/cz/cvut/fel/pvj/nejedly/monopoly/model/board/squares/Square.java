@@ -12,7 +12,7 @@ public abstract class Square {
 
     @Override
     public String toString() {
-        return name + " (board position: " + boardPosition + ")";
+        return name;
     }
 
     public int getPosition() {
