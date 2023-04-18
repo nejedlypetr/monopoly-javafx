@@ -3,13 +3,13 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
 public class Railroad extends Square implements Ownable {
-    private final int rent;
+    private int rent = 0;
     private Player owner;
     private final int purchasePrice;
 
-    public Railroad(String name, int position) {
+    public Railroad(String name, int position, int rent) {
         super(name, position);
-        this.rent = 200;
+        this.rent = rent;
         this.purchasePrice = 200;
         this.owner = null;
     }
@@ -19,17 +19,27 @@ public class Railroad extends Square implements Ownable {
         return true;
     }
 
-    public void setOwner(Player owner) {
-        this.owner = owner;
+    @Override
+    public void setOwner(Player player) {
+        owner = player;
     }
 
     public Player getOwner() {
         return owner;
     }
 
+    private int calculateRent(int numberOfOwnedRailroads) {
+        return switch (numberOfOwnedRailroads) {
+            case 2 -> (rent * 2);
+            case 3 -> (rent * 4);
+            case 4 -> (rent * 8);
+            default -> rent;
+        };
+    }
+
     @Override
     public int getRent() {
-        return rent;
+        return calculateRent(owner.getNumberOfOwnedRailroads());
     }
 
     @Override
@@ -45,5 +55,17 @@ public class Railroad extends Square implements Ownable {
     @Override
     public boolean isHabitable() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String ownerText = (owner == null) ? "---" : owner.getName();
+        return getName() + System.lineSeparator() + System.lineSeparator() +
+                "Owner: " + ownerText + System.lineSeparator() +
+                "Rent 1: $" + calculateRent(1) + System.lineSeparator() +
+                "Rent 2: $" + calculateRent(2) + System.lineSeparator() +
+                "Rent 3: $" + calculateRent(3) + System.lineSeparator() +
+                "Rent 4: $" + calculateRent(4) + System.lineSeparator() +
+                "Purchase price: $" + purchasePrice;
     }
 }
