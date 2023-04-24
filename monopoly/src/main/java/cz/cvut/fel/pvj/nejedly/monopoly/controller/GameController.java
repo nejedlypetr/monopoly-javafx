@@ -1,7 +1,8 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.controller;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.GameView;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.MenuView;
@@ -10,6 +11,9 @@ import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -60,7 +64,9 @@ public class GameController {
         int position = activePlayer.getBoardPosition().get();
         Square square = gameModel.getBoard().getBoardSquares()[position];
 
-        gameModel.getActivePlayer().purchaseSquare(square);
+        if (!gameModel.getActivePlayer().purchaseSquare(square)) {
+           new Alert(Alert.AlertType.INFORMATION, "This square is already purchased or cannot be purchased.").showAndWait();
+        }
     }
 
     private void advancePlayerPositionBy(Player player, int steps) {
@@ -142,5 +148,20 @@ public class GameController {
         }
 
         return new int[]{x,y};
+    }
+
+    public void sellPropertyButtonPressed() {
+        ComboBox<Ownable> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(gameModel.getActivePlayer().getOwnedSquares());
+
+        Button sellButton = new Button("Sell property");
+        sellButton.setOnAction(actionEvent -> {
+            Ownable selectedItem = comboBox.getValue();
+            gameModel.getActivePlayer().sellOwnedSquare((Square) selectedItem);
+            System.out.println(gameModel.getActivePlayer().getName() + " sold " + selectedItem); // todo LOGGER
+            ((Stage) sellButton.getScene().getWindow()).close();
+        });
+
+        gameView.showSellPropertyDialog(comboBox, sellButton);
     }
 }
