@@ -1,6 +1,9 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Railroad;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -14,7 +17,7 @@ public class Player {
     private final SimpleIntegerProperty money;
     private boolean isBankrupt;
     private boolean isInJail;
-    private final ObservableList<Square> ownedSquares;
+    private final ObservableList<Ownable> ownedSquares;
     private final String spriteImage;
     private ArrayList<GetOutOfJailFreeCard> getOutOfJailFreeCards;
 
@@ -34,16 +37,19 @@ public class Player {
         if (!ownable.isOwned() && money.get() >= ownable.getPurchasePrice()) {
             changeMoneyBalanceBy(-ownable.getPurchasePrice());
             ownable.setOwner(this);
-            return ownedSquares.add(square);
+            return ownedSquares.add((Ownable) square);
         }
         return false;
     }
 
-    public void removeOwnedSquare(Square square) {
-        ownedSquares.remove(square);
+    public boolean sellOwnedSquare(Square square) {
+        if (!(square instanceof Ownable ownable) || !ownedSquares.contains(square)) return false;
+        changeMoneyBalanceBy(ownable.getPurchasePrice());
+        ownable.setOwner(null);
+        return ownedSquares.remove(ownable);
     }
 
-    public ObservableList<Square> getOwnedSquares() {
+    public ObservableList<Ownable> getOwnedSquares() {
         return ownedSquares;
     }
 
@@ -97,8 +103,8 @@ public class Player {
 
     public int getNumberOfOwnedUtilities() {
         int numberOfOwnedUtilities = 0;
-        for (Square square : ownedSquares) {
-            if (square instanceof Utility) {
+        for (Ownable ownable : ownedSquares) {
+            if (ownable instanceof Utility) {
                 numberOfOwnedUtilities++;
             }
         }
@@ -107,8 +113,8 @@ public class Player {
 
     public int getNumberOfOwnedRailroads() {
         int numberOfOwnedRailroads = 0;
-        for (Square square : ownedSquares) {
-            if (square instanceof Railroad) {
+        for (Ownable ownable : ownedSquares) {
+            if (ownable instanceof Railroad) {
                 numberOfOwnedRailroads++;
             }
         }
