@@ -11,13 +11,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +48,7 @@ public class GameView {
         purchaseButton = new Button("BUY PROPERTY");
         purchaseButton.setOnAction(actionEvent -> controller.purchasePropertyButtonPressed());
         sellButton = new Button("SELL PROPERTY");
+        sellButton.setOnAction(actionEvent -> controller.sellPropertyButtonPressed());
         saveGameButton = new Button("SAVE GAME & EXIT");
         sprites = createSpriteImageViews();
     }
@@ -111,6 +110,7 @@ public class GameView {
         observables.add(gameModel.getActivePlayerProperty());
         for (Player player : gameModel.getPlayers()) {
             observables.add(player.getBoardPosition());
+            observables.add(player.getOwnedSquares());
         }
 
         description.textProperty().bind(Bindings.createStringBinding(() -> {
@@ -174,7 +174,7 @@ public class GameView {
         playerInfo.setPadding(new Insets(5, 0, 5, 0));
         playerInfo.setAlignment(Pos.CENTER);
 
-        TableView<Square> table = createEmptyTableView();
+        TableView<Ownable> table = createEmptyTableView();
         table.setMaxWidth(290);
         table.setSelectionModel(null);
         table.setItems(player.getOwnedSquares());
@@ -185,48 +185,37 @@ public class GameView {
         return playerInfoBox;
     }
 
-    private TableView<Square> createEmptyTableView() {
-        TableView<Square> table = new TableView<>();
+    private TableView<Ownable> createEmptyTableView() {
+        TableView<Ownable> table = new TableView<>();
 
-        TableColumn<Square, String> nameColumn = new TableColumn<>("Property");
-        TableColumn<Square, Number> priceColumn = new TableColumn<>("Price");
-        TableColumn<Square, String> rentColumn = new TableColumn<>("Rent");
-        TableColumn<Square, String> colorColumn = new TableColumn<>("Color");
+        TableColumn<Ownable, String> nameColumn = new TableColumn<>("Property");
+        TableColumn<Ownable, Number> priceColumn = new TableColumn<>("Price");
+        TableColumn<Ownable, String> rentColumn = new TableColumn<>("Rent");
+        TableColumn<Ownable, String> colorColumn = new TableColumn<>("Color");
 
         nameColumn.setSortable(false);
         priceColumn.setSortable(false);
         rentColumn.setSortable(false);
         colorColumn.setSortable(false);
 
-        nameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
+        nameColumn.setCellValueFactory(data -> new SimpleStringProperty(((Square) data.getValue()).getName()));
 
         priceColumn.setCellValueFactory(data -> {
-            Square square = data.getValue();
-            if (square instanceof Property property) {
-                return new SimpleIntegerProperty(property.getPurchasePrice());
-            } else if (square instanceof Utility utility) {
-                return new SimpleIntegerProperty(utility.getPurchasePrice());
-            } else if (square instanceof Railroad railroad) {
-                return new SimpleIntegerProperty(railroad.getPurchasePrice());
-            }
-            return null;
+            Ownable ownable = data.getValue();
+            return new SimpleIntegerProperty(ownable.getPurchasePrice());
         });
 
         rentColumn.setCellValueFactory(data -> {
-            Square square = data.getValue();
-            if (square instanceof Property property) {
-                return new SimpleStringProperty(Integer.toString(property.getRent()));
-            } else if (square instanceof Utility) {
-                return new SimpleStringProperty("5 * (dice roll)");
-            } else if (square instanceof Railroad railroad) {
-                return new SimpleStringProperty(Integer.toString(railroad.getRent()));
+            Ownable ownable = data.getValue();
+            if (ownable instanceof Utility) {
+                return new SimpleStringProperty("4 * (dice)\n10 * (dice)");
             }
-            return null;
+            return new SimpleStringProperty(Integer.toString(ownable.getRent()));
         });
 
         colorColumn.setCellValueFactory(data -> {
-            Square square = data.getValue();
-            if (square instanceof Property property) {
+            Ownable ownable = data.getValue();
+            if (ownable instanceof Property property) {
                 return new SimpleStringProperty(property.getGroup().toString());
             }
             return new SimpleStringProperty("----");
@@ -274,5 +263,26 @@ public class GameView {
 
     public Button getEndTurnButton() {
         return endTurnButton;
+    }
+
+    public void showSellPropertyDialog(ComboBox comboBox, Button sellButton) {
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(20);
+
+        Button closeButton = new Button("Cancel");
+        closeButton.setOnAction(actionEvent -> ((Stage) closeButton.getScene().getWindow()).close());
+
+        HBox buttons = new HBox();
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(40);
+        buttons.getChildren().addAll(sellButton, closeButton);
+
+        vbox.getChildren().addAll(comboBox, buttons);
+
+        Dialog<String> dialog = new Dialog<>();
+        dialog.getDialogPane().setPrefSize(350, 150);
+        dialog.getDialogPane().setContent(vbox);
+        dialog.showAndWait();
     }
 }
