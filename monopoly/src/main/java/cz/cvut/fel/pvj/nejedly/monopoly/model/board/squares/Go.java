@@ -6,9 +6,4 @@ public class Go extends Square {
         super("Go", position);
         this.salary = salary;
     }
-
-    @Override
-    public boolean isOwnable() {
-        return false;
-    }
 }

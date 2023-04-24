@@ -36,16 +36,6 @@ public class Utility extends Square implements Ownable {
         return purchasePrice;
     }
 
-    @Override
-    public boolean isHabitable() {
-        return false;
-    }
-
-    @Override
-    public boolean isOwnable() {
-        return true;
-    }
-
     public Player getOwner() {
         return owner;
     }

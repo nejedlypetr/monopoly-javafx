@@ -8,11 +8,6 @@ public class Tax extends Square {
         this.tax = tax;
     }
 
-    @Override
-    public boolean isOwnable() {
-        return false;
-    }
-
     public int getTax() {
         return tax;
     }

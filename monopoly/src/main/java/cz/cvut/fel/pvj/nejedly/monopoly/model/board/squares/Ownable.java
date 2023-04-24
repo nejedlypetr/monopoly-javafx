@@ -8,5 +8,4 @@ public interface Ownable {
     int getPurchasePrice();
     Player getOwner();
     void setOwner(Player player);
-    boolean isHabitable();
 }
