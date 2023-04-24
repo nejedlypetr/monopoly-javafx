@@ -11,9 +11,4 @@ public class GoToJail extends Square {
     public int getJailPosition() {
         return jailPosition;
     }
-
-    @Override
-    public boolean isOwnable() {
-        return false;
-    }
 }

@@ -15,11 +15,6 @@ public class Railroad extends Square implements Ownable {
     }
 
     @Override
-    public boolean isOwnable() {
-        return true;
-    }
-
-    @Override
     public void setOwner(Player player) {
         owner = player;
     }
@@ -50,11 +45,6 @@ public class Railroad extends Square implements Ownable {
     @Override
     public int getPurchasePrice() {
         return purchasePrice;
-    }
-
-    @Override
-    public boolean isHabitable() {
-        return false;
     }
 
     @Override

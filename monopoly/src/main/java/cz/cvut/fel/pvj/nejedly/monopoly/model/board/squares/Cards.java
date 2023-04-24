@@ -9,9 +9,4 @@ public class Cards extends Square {
         super(name, position);
         this.cardType = cardType;
     }
-
-    @Override
-    public boolean isOwnable() {
-        return false;
-    }
 }

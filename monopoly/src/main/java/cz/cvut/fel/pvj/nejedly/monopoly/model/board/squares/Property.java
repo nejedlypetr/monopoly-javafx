@@ -2,7 +2,7 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
-public class Property extends Square implements Ownable, Habitable {
+public class Property extends Square implements Ownable {
     private final PropertyGroup group;
     private final int rent;
     private Player owner;
@@ -14,11 +14,6 @@ public class Property extends Square implements Ownable, Habitable {
         this.rent = rent;
         this.purchasePrice = purchasePrice;
         this.owner = null;
-    }
-
-    @Override
-    public boolean isOwnable() {
-        return true;
     }
 
     @Override
@@ -42,11 +37,6 @@ public class Property extends Square implements Ownable, Habitable {
 
     public PropertyGroup getGroup() {
         return group;
-    }
-
-    @Override
-    public boolean isHabitable() {
-        return true;
     }
 
     @Override
