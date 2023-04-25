@@ -2,29 +2,31 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Player {
     private final String name;
-    private SimpleIntegerProperty boardPosition;
+    private final SimpleIntegerProperty boardPosition;
     private final SimpleIntegerProperty money;
-    private boolean isBankrupt;
-    private boolean isInJail;
+    private final SimpleBooleanProperty isBankrupt;
+    private final SimpleBooleanProperty isInJail;
     private final ObservableList<Ownable> ownedSquares;
     private final String spriteImage;
-    private ArrayList<GetOutOfJailFreeCard> getOutOfJailFreeCards;
+    private final ArrayList<GetOutOfJailFreeCard> getOutOfJailFreeCards;
 
     public Player(String name, String spriteImage) {
         this.name = name;
         this.spriteImage = spriteImage;
         boardPosition = new SimpleIntegerProperty(0);
         money = new SimpleIntegerProperty(1_500);
-        isBankrupt = false;
-        isInJail = false;
+        isBankrupt = new SimpleBooleanProperty(false);
+        isInJail = new SimpleBooleanProperty(false);
         ownedSquares = FXCollections.observableArrayList();
         getOutOfJailFreeCards = new ArrayList<>();
     }
@@ -50,23 +52,29 @@ public class Player {
         return ownedSquares;
     }
 
-    public boolean isBankrupt() {
+    public SimpleBooleanProperty isBankrupt() {
         return isBankrupt;
     }
 
     public void setBankrupt(boolean bankrupt) {
-        isBankrupt = bankrupt;
+        isBankrupt.set(bankrupt);
     }
 
-    public boolean isInJail() {
+    public SimpleBooleanProperty isInJail() {
         return isInJail;
     }
 
     public void setInJail(boolean inJail) {
-        isInJail = inJail;
+        isInJail.set(inJail);
     }
 
     public String getName() {
+        return name;
+    }
+
+    public String getNameWithStatus() {
+        if (isBankrupt.getValue()) return "(bankrupt) " + name;
+        else if (isInJail.getValue()) return "(in jail) " + name;
         return name;
     }
 
@@ -80,7 +88,7 @@ public class Player {
 
     public void advancePositionBy(int steps) {
         int futurePosition = ((boardPosition.getValue() + steps) % 40);
-        if ((boardPosition.getValue() > futurePosition) && !isInJail) {
+        if ((boardPosition.getValue() > futurePosition) && !isInJail.getValue()) {
             changeMoneyBalanceBy(200); // player receives $200 salary when passing GO square
         }
         boardPosition.set(futurePosition);
@@ -105,9 +113,7 @@ public class Player {
     public int getNumberOfOwnedUtilities() {
         int numberOfOwnedUtilities = 0;
         for (Ownable ownable : ownedSquares) {
-            if (ownable instanceof Utility) {
-                numberOfOwnedUtilities++;
-            }
+            if (ownable instanceof Utility) numberOfOwnedUtilities++;
         }
         return numberOfOwnedUtilities;
     }
@@ -115,9 +121,7 @@ public class Player {
     public int getNumberOfOwnedRailroads() {
         int numberOfOwnedRailroads = 0;
         for (Ownable ownable : ownedSquares) {
-            if (ownable instanceof Railroad) {
-                numberOfOwnedRailroads++;
-            }
+            if (ownable instanceof Railroad) numberOfOwnedRailroads++;
         }
         return numberOfOwnedRailroads;
     }
@@ -127,12 +131,36 @@ public class Player {
     }
 
     public void changeMoneyBalanceBy(int amount) {
-        money.set(money.get() + amount);
-        // todo implement bankrupt
+        if ((-amount) > money.getValue()) {
+            autoSellProperties(-amount);
+        }
+
+        if ((money.get() + amount) < 0) {
+            money.set(0);
+        } else {
+            money.set(money.get() + amount);
+        }
+    }
+
+    private void autoSellProperties(int moneyNeeded) {
+        int moneyGained = 0;
+
+        ownedSquares.sort(Comparator.comparingInt(Ownable::getPurchasePrice)); // sort by purchase price
+        for (Ownable ownable : ownedSquares) {
+            if (moneyGained < moneyNeeded) {
+                sellOwnedSquare((Square) ownable);
+                moneyGained += ownable.getPurchasePrice();
+            }
+        }
+
+        if (moneyGained < moneyNeeded) {
+            setBankrupt(true);
+            money.set(0);
+        }
     }
 
     public void stepOnGoToJail() {
-        isInJail = true;
+        isInJail.set(true);
     }
 
     public void stepOnTax(Tax tax) {
