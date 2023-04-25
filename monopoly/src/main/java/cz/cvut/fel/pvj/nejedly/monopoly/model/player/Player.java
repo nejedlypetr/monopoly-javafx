@@ -1,9 +1,6 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Railroad;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -82,7 +79,11 @@ public class Player {
     }
 
     public void advancePositionBy(int steps) {
-        boardPosition.set((boardPosition.getValue() + steps) % 40);
+        int futurePosition = ((boardPosition.getValue() + steps) % 40);
+        if ((boardPosition.getValue() > futurePosition) && !isInJail) {
+            changeMoneyBalanceBy(200); // player receives $200 salary when passing GO square
+        }
+        boardPosition.set(futurePosition);
     }
 
     public void advancePositionTo(Square square) {
@@ -127,6 +128,14 @@ public class Player {
 
     public void changeMoneyBalanceBy(int amount) {
         money.set(money.get() + amount);
+        // todo implement bankrupt
     }
 
+    public void stepOnGoToJail() {
+        isInJail = true;
+    }
+
+    public void stepOnTax(Tax tax) {
+        changeMoneyBalanceBy(-tax.getTax());
+    }
 }
