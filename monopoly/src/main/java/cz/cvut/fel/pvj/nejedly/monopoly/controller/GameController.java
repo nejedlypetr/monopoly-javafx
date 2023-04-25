@@ -53,8 +53,12 @@ public class GameController {
     public void rollButtonPressed() {
         int steps = gameModel.getDie().roll();
 
+        // player in jail logic
         if (gameModel.getActivePlayer().isInJail().getValue()) {
-            if (!gameModel.getDie().isDoubles()) return;
+            if (!gameModel.getDie().isDoubles()) {
+                gameView.getRollButton().setDisable(true);
+                return;
+            }
 
             // set player free from jail
             gameModel.getActivePlayer().setInJail(false);
@@ -80,9 +84,18 @@ public class GameController {
         });
     }
 
-    public void endTurnButtonPressed() {
-        gameModel.setNextPlayerAsActive();
-        gameView.getRollButton().setDisable(false);
+    public void endTurnButtonPressed(Scene oldScene) {
+        if (gameModel.hasGameEnded()) {
+            changeScenes(oldScene, menuView.getScene());
+            new Alert(
+                    Alert.AlertType.INFORMATION,
+                    "The winner is "+gameModel.getWinner().getName()+", congratulations!\n The game has ended, but you can always start a new one.",
+                    ButtonType.OK
+            ).showAndWait();
+        } else {
+            gameModel.setNextPlayerAsActive();
+            gameView.getRollButton().setDisable(false);
+        }
     }
 
     public void purchasePropertyButtonPressed() {
@@ -91,7 +104,7 @@ public class GameController {
         Square square = gameModel.getBoard().getBoardSquares()[position];
 
         if (!gameModel.getActivePlayer().purchaseSquare(square)) {
-           new Alert(Alert.AlertType.INFORMATION, "This square is already purchased or cannot be purchased.").showAndWait();
+           new Alert(Alert.AlertType.INFORMATION, "This square is already purchased or cannot be purchased or you do not have enough funds.").showAndWait();
         }
     }
 
@@ -104,12 +117,12 @@ public class GameController {
             int[] previousPosition = calculateSpritePositionOnBoard((currentPosition + i - 1) % 40);
             int[] nextPosition = calculateSpritePositionOnBoard((currentPosition+i) % 40);
 
-            TranslateTransition t = new TranslateTransition(Duration.seconds(0.5), gameView.getSprites().get(player.getName()));
+            TranslateTransition t = new TranslateTransition(Duration.seconds(0.3), gameView.getSprites().get(player.getName()));
             t.setByX(nextPosition[0] - previousPosition[0]);
             t.setByY(nextPosition[1] - previousPosition[1]);
 
             sequentialTransition.getChildren().add(t);
-            sequentialTransition.getChildren().add(new PauseTransition(Duration.seconds(0.1)));
+            sequentialTransition.getChildren().add(new PauseTransition(Duration.seconds(0.08)));
         }
 
         // disable rollButton and endTurnButton while a sprite animation is running
