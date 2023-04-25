@@ -9,4 +9,8 @@ public class Cards extends Square {
         super(name, position);
         this.cardType = cardType;
     }
+
+    public CardType getCardType() {
+        return cardType;
+    }
 }
