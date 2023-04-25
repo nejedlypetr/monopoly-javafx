@@ -44,7 +44,7 @@ public class GameView {
         rollButton = new Button("ROLL DICE");
         rollButton.setOnAction(actionEvent -> controller.rollButtonPressed());
         endTurnButton = new Button("END TURN");
-        endTurnButton.setOnAction(actionEvent -> controller.endTurnButtonPressed());
+        endTurnButton.setOnAction(actionEvent -> controller.endTurnButtonPressed(scene));
         purchaseButton = new Button("BUY PROPERTY");
         purchaseButton.setOnAction(actionEvent -> controller.purchasePropertyButtonPressed());
         sellButton = new Button("SELL PROPERTY");
@@ -165,7 +165,8 @@ public class GameView {
 
     private VBox createPlayerInfoBox(Player player) {
         ImageView avatar = createImage("/sprites/"+player.getSpriteImage(), 30);
-        Label label = new Label(" "+player.getName()+" - ");
+        Label label = new Label();
+        label.textProperty().bind(Bindings.createStringBinding(() -> " "+player.getNameWithStatus()+" - ", player.isBankrupt(), player.isInJail()));
 
         Label money = new Label();
         money.textProperty().bind(Bindings.concat("$", player.getMoney().asString()));
