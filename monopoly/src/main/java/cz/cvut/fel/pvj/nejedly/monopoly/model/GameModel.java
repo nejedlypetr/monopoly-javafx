@@ -1,6 +1,11 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Board;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Cards;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.CardType;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.die.Die;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import javafx.beans.property.SimpleObjectProperty;
@@ -67,5 +72,29 @@ public class GameModel {
 
     public SimpleObjectProperty<Player> getActivePlayerProperty() {
         return activePlayer;
+    }
+
+    public void steppedOnOwnable(Ownable ownable, Player player) {
+        if (ownable.isOwned() && !player.getOwnedSquares().contains(ownable)) {
+            if (ownable instanceof Utility utility) {
+                player.changeMoneyBalanceBy(-utility.getRent(die));
+                ownable.getOwner().changeMoneyBalanceBy(utility.getRent(die));
+            } else {
+                player.changeMoneyBalanceBy(-ownable.getRent());
+                ownable.getOwner().changeMoneyBalanceBy(ownable.getRent());
+            }
+
+            // todo: implement a case when player is short on money - auto-sell properties/bankrupt (probably inside changeMoneyBalanceBy() method)
+        }
+    }
+
+    public Card steppedOnCards(Cards cards, Player player) {
+        Card card = null;
+        if (cards.getCardType().equals(CardType.CHANCE)) {
+            card = board.getChanceDeck().drawCard();
+        } else if (cards.getCardType().equals(CardType.COMMUNITY_CHEST)) {
+            card = board.getCommunityChestDeck().drawCard();
+        }
+        return card;
     }
 }
