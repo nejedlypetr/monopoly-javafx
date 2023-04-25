@@ -52,8 +52,17 @@ public class GameController {
 
     public void rollButtonPressed() {
         int steps = gameModel.getDie().roll();
-        SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(gameModel.getActivePlayer(), steps);
 
+        if (gameModel.getActivePlayer().isInJail().getValue()) {
+            if (!gameModel.getDie().isDoubles()) return;
+
+            // set player free from jail
+            gameModel.getActivePlayer().setInJail(false);
+            new Alert(Alert.AlertType.INFORMATION, "Congratulations! You managed to get out of jail.", ButtonType.OK).show();
+        }
+
+        // advance player and play sprite animation
+        SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(gameModel.getActivePlayer(), steps);
         spriteMovementAnimation.setOnFinished(actionEvent -> {
             if (gameModel.getDie().isDoubles()) {
                 // remove a binding to be able to use rollButton.set() method
