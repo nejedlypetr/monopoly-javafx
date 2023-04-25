@@ -1,8 +1,8 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.controller;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.GameView;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.MenuView;
@@ -13,6 +13,7 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -51,7 +52,23 @@ public class GameController {
 
     public void rollButtonPressed() {
         int steps = gameModel.getDie().roll();
-        advancePlayerPositionBy(gameModel.getActivePlayer(), steps);
+        SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(gameModel.getActivePlayer(), steps);
+
+        spriteMovementAnimation.setOnFinished(actionEvent -> {
+            if (gameModel.getDie().isDoubles()) {
+                // remove a binding to be able to use rollButton.set() method
+                gameView.getRollButton().disableProperty().unbind();
+            } else {
+                // disable rollButton after the animation is finished
+                gameView.getRollButton().disableProperty().unbind();
+                gameView.getRollButton().setDisable(true);
+            }
+
+            // run action based on what square has player landed on
+            int activePlayerNewBoardPosition = gameModel.getActivePlayer().getBoardPosition().get();
+            Square square = gameModel.getBoard().getBoardSquares()[activePlayerNewBoardPosition];
+            stepOnSquare(gameModel.getActivePlayer(), square);
+        });
     }
 
     public void endTurnButtonPressed() {
@@ -69,7 +86,7 @@ public class GameController {
         }
     }
 
-    private void advancePlayerPositionBy(Player player, int steps) {
+    private SequentialTransition advancePlayerPositionBy(Player player, int steps) {
         SequentialTransition sequentialTransition = new SequentialTransition();
 
         // create sprite movement animation
@@ -90,19 +107,9 @@ public class GameController {
         gameView.getRollButton().disableProperty().bind(sequentialTransition.statusProperty().isEqualTo(Animation.Status.RUNNING));
         gameView.getEndTurnButton().disableProperty().bind(sequentialTransition.statusProperty().isEqualTo(Animation.Status.RUNNING));
 
-        if (gameModel.getDie().isDoubles()) {
-            // remove a binding to be able to use rollButton.set() method
-            sequentialTransition.setOnFinished(actionEvent -> gameView.getRollButton().disableProperty().unbind());
-        } else {
-            // disable rollButton after the animation is finished
-            sequentialTransition.setOnFinished(actionEvent -> {
-                gameView.getRollButton().disableProperty().unbind();
-                gameView.getRollButton().setDisable(true);
-            });
-        }
-
         player.advancePositionBy(steps);
         sequentialTransition.play();
+        return sequentialTransition;
     }
 
     public int[] calculateSpritePositionOnBoard(int boardPosition) {
@@ -163,5 +170,51 @@ public class GameController {
         });
 
         gameView.showSellPropertyDialog(comboBox, sellButton);
+    }
+
+    private void stepOnSquare(Player player, Square square) {
+        if (square instanceof Ownable ownable) {
+            gameModel.steppedOnOwnable(ownable, player);
+            if (ownable.isOwned() && !player.getOwnedSquares().contains(ownable)) {
+                int rent = 0;
+                if (ownable instanceof Utility utility) rent = utility.getRent(gameModel.getDie());
+                else rent = ownable.getRent();
+                new Alert(
+                        Alert.AlertType.INFORMATION,
+                        "You stepped on "+((Square) ownable).getName()+", which is owned by "+ownable.getOwner().getName()+".\nPay rent $"+rent+".",
+                        ButtonType.OK
+                ).show();
+            }
+        } else if (square instanceof Cards cards) {
+            Card card = gameModel.steppedOnCards(cards, player);
+            new Alert(
+                    Alert.AlertType.INFORMATION,
+                    card.toString(),
+                    ButtonType.OK
+            ).show();
+        } else if (square instanceof GoToJail goToJail) {
+            player.stepOnGoToJail();
+
+            // animate sprite movement to jail square
+            SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(player, (player.getBoardPosition().getValue() - goToJail.getJailPosition()));
+            spriteMovementAnimation.setOnFinished(actionEvent -> {
+                // disable roll button
+                gameView.getRollButton().disableProperty().unbind();
+                gameView.getRollButton().setDisable(true);
+            });
+
+            new Alert(
+                    Alert.AlertType.INFORMATION,
+                    "You have been send to jail! You stepped on Go To Jail square.\nTo get out of jail you need to roll doubles.",
+                    ButtonType.OK
+            ).show();
+        } else if (square instanceof Tax tax) {
+            player.stepOnTax(tax);
+            new Alert(
+                    Alert.AlertType.INFORMATION,
+                "You stepped on "+tax.getName()+" and have to pay $"+tax.getTax()+" on taxes.",
+                    ButtonType.OK
+            ).show();
+        }
     }
 }
