@@ -1,5 +1,9 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards;
 
+import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
+
+import java.util.ArrayList;
+
 public class ReceiveMoneyCard extends Card {
     private final int amount;
     private final boolean fromEachPlayer;
@@ -16,11 +20,18 @@ public class ReceiveMoneyCard extends Card {
         this.fromEachPlayer = fromEachPlayer;
     }
 
-    public int getAmount() {
-        return amount;
-    }
+    public void execute(Player player, ArrayList<Player> players) {
+        if (!fromEachPlayer) {
+            player.changeMoneyBalanceBy(amount);
+            return;
+        }
 
-    public boolean isFromEachPlayer() {
-        return fromEachPlayer;
+        // receive money from every player
+        for (Player p : players) {
+            if (p.equals(player) || p.isBankrupt().getValue()) continue;
+
+            p.changeMoneyBalanceBy(-amount);
+            player.changeMoneyBalanceBy(amount);
+        }
     }
 }

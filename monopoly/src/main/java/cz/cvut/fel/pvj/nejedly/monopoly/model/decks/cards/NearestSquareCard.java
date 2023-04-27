@@ -1,14 +1,26 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards;
 
-public class NearestSquareCard extends Card {
-    private final Class<?> squareType;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Board;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
-    public NearestSquareCard(CardType cardType, String text, Class<?> squareType) {
+public class NearestSquareCard extends Card {
+    private final String squareType;
+
+    public NearestSquareCard(CardType cardType, String text, String squareType) {
         super(cardType, text);
         this.squareType = squareType;
     }
 
-    public Class<?> getSquareType() {
-        return squareType;
+    public void execute(Player player, Board board) {
+        int playerBoardPosition = player.getBoardPosition().getValue();
+        Square square = board.getNearestSquareOfType(playerBoardPosition, squareType);
+
+        int steps = playerBoardPosition - square.getPosition();
+        if (steps < 0) {
+            steps += board.getBoardSquares().length;
+        }
+
+        player.advancePositionBy(steps);
     }
 }
