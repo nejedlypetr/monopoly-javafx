@@ -94,8 +94,8 @@ public class GameModel {
         return activePlayer;
     }
 
-    public void steppedOnOwnable(Ownable ownable, Player player) {
-        if (!ownable.isOwned() || player.getOwnedSquares().contains(ownable)) return;
+    public boolean steppedOnOwnable(Ownable ownable, Player player) {
+        if (!ownable.isOwned() || player.getOwnedSquares().contains(ownable)) return true;
 
         if (ownable instanceof Utility utility) {
             player.changeMoneyBalanceBy(-utility.getRent(die));
@@ -104,6 +104,7 @@ public class GameModel {
             player.changeMoneyBalanceBy(-ownable.getRent());
             ownable.getOwner().changeMoneyBalanceBy(ownable.getRent());
         }
+        return false;
     }
 
     public Card steppedOnCards(Cards cards, Player player) {
