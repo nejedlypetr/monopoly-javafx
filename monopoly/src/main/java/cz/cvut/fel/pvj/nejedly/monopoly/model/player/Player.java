@@ -1,13 +1,11 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.GetOutOfJailFreeCard;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Player {
@@ -18,7 +16,6 @@ public class Player {
     private final SimpleBooleanProperty isInJail;
     private final ObservableList<Ownable> ownedSquares;
     private final String spriteImage;
-    private final ArrayList<GetOutOfJailFreeCard> getOutOfJailFreeCards;
 
     public Player(String name, String spriteImage) {
         this.name = name;
@@ -28,7 +25,6 @@ public class Player {
         isBankrupt = new SimpleBooleanProperty(false);
         isInJail = new SimpleBooleanProperty(false);
         ownedSquares = FXCollections.observableArrayList();
-        getOutOfJailFreeCards = new ArrayList<>();
     }
 
     public boolean purchaseSquare(Square square) {
@@ -106,10 +102,6 @@ public class Player {
         return spriteImage;
     }
 
-    public ArrayList<GetOutOfJailFreeCard> getGetOutOfJailFreeCards() {
-        return getOutOfJailFreeCards;
-    }
-
     public int getNumberOfOwnedUtilities() {
         int numberOfOwnedUtilities = 0;
         for (Ownable ownable : ownedSquares) {
@@ -124,10 +116,6 @@ public class Player {
             if (ownable instanceof Railroad) numberOfOwnedRailroads++;
         }
         return numberOfOwnedRailroads;
-    }
-
-    public boolean addCardToGetOutOfJailFreeCards(GetOutOfJailFreeCard card) {
-        return getOutOfJailFreeCards.add(card);
     }
 
     public void changeMoneyBalanceBy(int amount) {
