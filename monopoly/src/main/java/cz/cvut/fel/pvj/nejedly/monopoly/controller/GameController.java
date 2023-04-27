@@ -196,50 +196,66 @@ public class GameController {
 
     private void stepOnSquare(Player player, Square square) {
         if (square instanceof Ownable ownable) {
-            if (gameModel.steppedOnOwnable(ownable, player)) return;
-
-            int rent;
-            if (ownable instanceof Utility utility) {
-                rent = utility.getRent(gameModel.getDie());
-            } else rent = ownable.getRent();
-
-            new Alert(
-                    Alert.AlertType.INFORMATION,
-                    "You stepped on "+((Square) ownable).getName()+", which is owned by "+ownable.getOwner().getName()+".\nPay rent $"+rent+".",
-                    ButtonType.OK
-            ).show();
+            steppedOnOwnable(player, ownable);
         } else if (square instanceof Cards cards) {
-            Card card = gameModel.steppedOnCards(cards, player);
-
-            new Alert(
-                    Alert.AlertType.INFORMATION,
-                    card.toString(),
-                    ButtonType.OK
-            ).show();
+            steppedOnCards(player, cards);
         } else if (square instanceof GoToJail goToJail) {
-            player.stepOnGoToJail();
-
-            // animate sprite movement to jail square
-            SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(player, (player.getBoardPosition().getValue() - goToJail.getJailPosition()));
-            spriteMovementAnimation.setOnFinished(actionEvent -> {
-                // disable roll button
-                gameView.getRollButton().disableProperty().unbind();
-                gameView.getRollButton().setDisable(true);
-            });
-
-            new Alert(
-                    Alert.AlertType.INFORMATION,
-                    "You have been send to jail! You stepped on Go To Jail square.\nTo get out of jail you need to roll doubles.",
-                    ButtonType.OK
-            ).show();
+            steppedOnGoToJail(player, goToJail);
         } else if (square instanceof Tax tax) {
-            player.stepOnTax(tax);
-
-            new Alert(
-                    Alert.AlertType.INFORMATION,
-                "You stepped on "+tax.getName()+" and have to pay $"+tax.getTax()+" on taxes.",
-                    ButtonType.OK
-            ).show();
+            steppedOnTax(player, tax);
         }
+    }
+
+    private void steppedOnTax(Player player, Tax tax) {
+        player.stepOnTax(tax);
+
+        new Alert(
+                Alert.AlertType.INFORMATION,
+                "You stepped on "+tax.getName()+" and have to pay $"+tax.getTax()+" on taxes.",
+                ButtonType.OK
+        ).show();
+    }
+
+    private void steppedOnGoToJail(Player player, GoToJail goToJail) {
+        player.stepOnGoToJail();
+
+        // animate sprite movement to jail square
+        SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(player, (player.getBoardPosition().getValue() - goToJail.getJailPosition()));
+        spriteMovementAnimation.setOnFinished(actionEvent -> {
+            // disable roll button
+            gameView.getRollButton().disableProperty().unbind();
+            gameView.getRollButton().setDisable(true);
+        });
+
+        new Alert(
+                Alert.AlertType.INFORMATION,
+                "You have been send to jail! You stepped on Go To Jail square.\nTo get out of jail you need to roll doubles.",
+                ButtonType.OK
+        ).show();
+    }
+
+    private void steppedOnCards(Player player, Cards cards) {
+        Card card = gameModel.steppedOnCards(cards, player);
+
+        new Alert(
+                Alert.AlertType.INFORMATION,
+                card.toString(),
+                ButtonType.OK
+        ).show();
+    }
+
+    private void steppedOnOwnable(Player player, Ownable ownable) {
+        if (gameModel.steppedOnOwnable(ownable, player)) return;
+
+        int rent;
+        if (ownable instanceof Utility utility) {
+            rent = utility.getRent(gameModel.getDie());
+        } else rent = ownable.getRent();
+
+        new Alert(
+                Alert.AlertType.INFORMATION,
+                "You stepped on "+((Square) ownable).getName()+", which is owned by "+ownable.getOwner().getName()+".\nPay rent $"+rent+".",
+                ButtonType.OK
+        ).show();
     }
 }
