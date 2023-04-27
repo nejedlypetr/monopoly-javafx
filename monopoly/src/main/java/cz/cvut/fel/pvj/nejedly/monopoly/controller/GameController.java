@@ -196,19 +196,21 @@ public class GameController {
 
     private void stepOnSquare(Player player, Square square) {
         if (square instanceof Ownable ownable) {
-            gameModel.steppedOnOwnable(ownable, player);
-            if (ownable.isOwned() && !player.getOwnedSquares().contains(ownable)) {
-                int rent = 0;
-                if (ownable instanceof Utility utility) rent = utility.getRent(gameModel.getDie());
-                else rent = ownable.getRent();
-                new Alert(
-                        Alert.AlertType.INFORMATION,
-                        "You stepped on "+((Square) ownable).getName()+", which is owned by "+ownable.getOwner().getName()+".\nPay rent $"+rent+".",
-                        ButtonType.OK
-                ).show();
-            }
+            if (gameModel.steppedOnOwnable(ownable, player)) return;
+
+            int rent;
+            if (ownable instanceof Utility utility) {
+                rent = utility.getRent(gameModel.getDie());
+            } else rent = ownable.getRent();
+
+            new Alert(
+                    Alert.AlertType.INFORMATION,
+                    "You stepped on "+((Square) ownable).getName()+", which is owned by "+ownable.getOwner().getName()+".\nPay rent $"+rent+".",
+                    ButtonType.OK
+            ).show();
         } else if (square instanceof Cards cards) {
             Card card = gameModel.steppedOnCards(cards, player);
+
             new Alert(
                     Alert.AlertType.INFORMATION,
                     card.toString(),
@@ -232,6 +234,7 @@ public class GameController {
             ).show();
         } else if (square instanceof Tax tax) {
             player.stepOnTax(tax);
+
             new Alert(
                     Alert.AlertType.INFORMATION,
                 "You stepped on "+tax.getName()+" and have to pay $"+tax.getTax()+" on taxes.",
