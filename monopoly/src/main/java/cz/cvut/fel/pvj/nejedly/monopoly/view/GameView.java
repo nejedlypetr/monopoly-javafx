@@ -50,6 +50,7 @@ public class GameView {
         sellButton = new Button("SELL PROPERTY");
         sellButton.setOnAction(actionEvent -> controller.sellPropertyButtonPressed());
         saveGameButton = new Button("SAVE GAME & EXIT");
+        saveGameButton.setOnAction(actionEvent -> controller.saveGameButtonPressed(scene));
         sprites = createSpriteImageViews();
     }
 
