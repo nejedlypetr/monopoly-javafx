@@ -1,5 +1,8 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model.player;
 
+import com.github.cliftonlabs.json_simple.JsonArray;
+import com.github.cliftonlabs.json_simple.JsonObject;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Board;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -25,6 +28,22 @@ public class Player {
         isBankrupt = new SimpleBooleanProperty(false);
         isInJail = new SimpleBooleanProperty(false);
         ownedSquares = FXCollections.observableArrayList();
+    }
+
+    public Player(String name, int boardPosition, int money, boolean isBankrupt, boolean isInJail, ObservableList<Ownable> ownedSquares, int spriteIndex) {
+        this.name = name;
+        this.boardPosition = new SimpleIntegerProperty(boardPosition);
+        this.money = new SimpleIntegerProperty(money);
+        this.isBankrupt = new SimpleBooleanProperty(isBankrupt);
+        this.isInJail = new SimpleBooleanProperty(isInJail);
+        this.ownedSquares = ownedSquares;
+
+        try {
+            String[] SPRITES = new String[]{"boot.png", "car.png", "dog.png", "hat.png", "ship.png", "iron.png"};
+            spriteImage = SPRITES[spriteIndex];
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean purchaseSquare(Square square) {
@@ -153,5 +172,39 @@ public class Player {
 
     public void stepOnTax(Tax tax) {
         changeMoneyBalanceBy(-tax.getTax());
+    }
+
+    public JsonObject toJsonObject() {
+        JsonObject player = new JsonObject();
+        player.put("name", name);
+        player.put("boardPosition", boardPosition.getValue());
+        player.put("money", money.getValue());
+        player.put("isBankrupt", isBankrupt.getValue());
+        player.put("isInJail", isInJail.getValue());
+
+        JsonArray ownedSquaresJsonArray = new JsonArray();
+        for (Ownable ownable : ownedSquares) {
+            ownedSquaresJsonArray.add(((Square) ownable).getPosition());
+        }
+        player.put("ownedSquares", ownedSquaresJsonArray);
+
+        return player;
+    }
+
+    public static Player fromJsonObject(JsonObject jsonObject, Board board, int spriteIndex) {
+        String name = (String) jsonObject.get("name");
+        int boardPosition = Integer.parseInt(jsonObject.get("boardPosition").toString());
+        int money = Integer.parseInt(jsonObject.get("money").toString());
+        boolean isBankrupt = (Boolean) jsonObject.get("isBankrupt");
+        boolean isInJail = (Boolean) jsonObject.get("isInJail");
+
+        ObservableList<Ownable> ownedSquares = FXCollections.observableArrayList();
+        JsonArray ownedSquaresJsonArray = (JsonArray) jsonObject.get("ownedSquares");
+        for (Object obj : ownedSquaresJsonArray) {
+            Square square = board.getBoardSquares()[Integer.parseInt(obj.toString())];
+            ownedSquares.add((Ownable) square);
+        }
+
+        return new Player(name, boardPosition, money, isBankrupt, isInJail, ownedSquares, spriteIndex);
     }
 }
