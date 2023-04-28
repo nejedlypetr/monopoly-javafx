@@ -1,14 +1,25 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.model;
 
+import com.github.cliftonlabs.json_simple.JsonArray;
+import com.github.cliftonlabs.json_simple.JsonException;
+import com.github.cliftonlabs.json_simple.JsonObject;
+import com.github.cliftonlabs.json_simple.Jsoner;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Board;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Cards;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
-import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.*;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.CardType;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.PayMoneyCard;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.ReceiveMoneyCard;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.die.Die;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameModel {
@@ -22,6 +33,13 @@ public class GameModel {
         die = new Die();
         players = new ArrayList<>();
         activePlayer = new SimpleObjectProperty<>();
+    }
+
+    public GameModel(ArrayList<Player> players, Player activePlayer, Board board) {
+        this.board = board;
+        die = new Die();
+        this.players = players;
+        this.activePlayer = new SimpleObjectProperty<>(activePlayer);
     }
 
     public void setNextPlayerAsActive() {
@@ -124,5 +142,62 @@ public class GameModel {
         } else if (card instanceof ReceiveMoneyCard receiveMoneyCard) {
             receiveMoneyCard.execute(player, players);
         }
+    }
+
+    private JsonObject toJsonObject() {
+        JsonArray playersJsonArray = new JsonArray();
+        for (Player player : players) {
+            playersJsonArray.add(player.toJsonObject());
+        }
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.put("activePlayer", activePlayer.getValue().getName());
+        jsonObject.put("players", playersJsonArray);
+
+        return jsonObject;
+    }
+
+    public void save() {
+        JsonObject jsonObject = toJsonObject();
+        try (FileWriter fileWriter = new FileWriter("saved-game.json")) {
+            fileWriter.write(jsonObject.toJson());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static GameModel load() throws FileNotFoundException, JsonException {
+        FileReader fileReader = new FileReader("saved-game.json");
+        JsonObject jsonObject = (JsonObject) Jsoner.deserialize(fileReader);
+        return fromJsonObject(jsonObject);
+    }
+
+    private static Player getPlayerByName(ArrayList<Player> listOfPlayers, String name) {
+        for (Player player : listOfPlayers) {
+            if (player.getName().equals(name)) return player;
+        }
+        return null;
+    }
+
+    private static GameModel fromJsonObject(JsonObject jsonObject) {
+        Board board = new Board();
+        ArrayList<Player> playerArrayList = new ArrayList<>();
+
+        JsonArray playersJsonArray = (JsonArray) jsonObject.get("players");
+        for (int i = 0; i < playersJsonArray.size(); i++) {
+            Player player = Player.fromJsonObject((JsonObject) playersJsonArray.get(i), board, i);
+
+            // set the owner of the square
+            for (Ownable ownable : player.getOwnedSquares()) {
+                ownable.setOwner(player);
+            }
+
+            playerArrayList.add(player);
+        }
+
+        String activePlayerName = (String) jsonObject.get("activePlayer");
+        Player activePlayer = getPlayerByName(playerArrayList, activePlayerName);
+
+        return new GameModel(playerArrayList, activePlayer, board);
     }
 }
