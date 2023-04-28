@@ -12,12 +12,15 @@ public class MoveToCard extends Card {
         this.square = square;
     }
 
-    public void execute(Player player, Board board) {
-        int steps = player.getBoardPosition().getValue() - square.getPosition();
+    public Square getSquare() {
+        return square;
+    }
+
+    public int getSteps(Player player, Board board) {
+        int steps = square.getPosition() - player.getBoardPosition().getValue();
         if (steps < 0) {
             steps += board.getBoardSquares().length;
         }
-
-        player.advancePositionBy(steps);
+        return steps;
     }
 }
