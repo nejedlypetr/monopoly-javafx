@@ -1,5 +1,6 @@
 package cz.cvut.fel.pvj.nejedly.monopoly.controller;
 
+import com.github.cliftonlabs.json_simple.JsonException;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
@@ -19,6 +20,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.io.FileNotFoundException;
 
 public class GameController {
     private MenuView menuView;
@@ -112,6 +115,28 @@ public class GameController {
 
         if (!gameModel.getActivePlayer().purchaseSquare(square)) {
            new Alert(Alert.AlertType.INFORMATION, "This square is already purchased or cannot be purchased or you do not have enough funds.").showAndWait();
+        }
+    }
+
+    public void saveGameButtonPressed(Scene oldScene) {
+        gameModel.save();
+        changeScenes(oldScene, menuView.getScene());
+    }
+
+    public void loadGameButtonPressed(Scene oldScene) {
+        try {
+            gameModel = GameModel.load();
+
+            gameView = new GameView(gameModel, this);
+            gameView.init();
+
+            changeScenes(oldScene, gameView.getScene());
+        } catch (FileNotFoundException e) {
+            new Alert(Alert.AlertType.INFORMATION, "File not found.").showAndWait();
+            throw new RuntimeException(e);
+        } catch (JsonException e) {
+            new Alert(Alert.AlertType.INFORMATION, "Parsing JSON error.").showAndWait();
+            throw new RuntimeException(e);
         }
     }
 

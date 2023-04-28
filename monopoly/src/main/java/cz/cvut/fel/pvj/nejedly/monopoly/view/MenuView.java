@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class MenuView {
     private final Scene scene;
@@ -33,7 +34,13 @@ public class MenuView {
         otherLabel.setId("heading2");
 
         Button loadGameButton = new Button("LOAD A GAME");
+        loadGameButton.setOnAction(actionEvent -> controller.loadGameButtonPressed(scene));
+
         Button exitButton = new Button("EXIT");
+        exitButton.setOnAction(actionEvent -> {
+            Stage stage = (Stage) scene.getWindow();
+            stage.close();
+        });
 
         pane.getChildren().addAll(
             createBackgroundImage(),
