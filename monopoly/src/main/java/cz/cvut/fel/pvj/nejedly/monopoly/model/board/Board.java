@@ -14,6 +14,9 @@ public class Board {
         boardSquares = createBoard();
         chanceDeck = new ChanceDeck(createChanceCards());
         communityChestDeck = new CommunityChestDeck(createCommunityChestCards());
+
+        chanceDeck.shuffle();
+        communityChestDeck.shuffle();
     }
 
     private Square[] createBoard() {
@@ -63,21 +66,18 @@ public class Board {
 
     private Card[] createChanceCards() {
         return  new Card[]{
-            new MoveToCard(CardType.CHANCE, "Go directly to jail.\nIf you pass GO, do not collect 200$.", boardSquares[10]),
             new MoveToCard(CardType.CHANCE, "Advance to GO.\nCollect 200$.", boardSquares[0]),
             new ReceiveMoneyCard(CardType.CHANCE, "Your building and loan matures.\nCollect 150$.", 150),
             new MoveToCard(CardType.CHANCE, "Take a walk on the board walk.\nAdvance token to "+boardSquares[39].getName(), boardSquares[39]),
             new MoveToCard(CardType.CHANCE, "Advance to "+boardSquares[24].getName()+".", boardSquares[24]),
-            new NearestSquareCard(CardType.CHANCE, "Advance token to nearest "+Utility.class+".", Utility.class),
+            new NearestSquareCard(CardType.CHANCE, "Advance token to nearest Utility.", Utility.class.getTypeName()),
             new MoveToCard(CardType.CHANCE, "Advance to "+boardSquares[11].getName()+".\nIf you pass GO, collect $200.", boardSquares[11]),
-            new NearestSquareCard(CardType.CHANCE, "Advance token to nearest "+Railroad.class+".", Railroad.class),
+            new NearestSquareCard(CardType.CHANCE, "Advance token to nearest Railroad.", Railroad.class.getTypeName()),
             new PayMoneyCard(CardType.CHANCE, "You have been elected chairman of the board. Pay each player $50", 50, true),
-            new MoveByCard(CardType.CHANCE, "Go back 3 spaces.", -3),
             new MoveToCard(CardType.CHANCE, "Take a ride to the "+boardSquares[5].getName()+".", boardSquares[5]),
-            new GetOutOfJailFreeCard(CardType.CHANCE, "Get out of jail free.\nThis card may be kept until needed."),
             new PayMoneyCard(CardType.CHANCE, "Pay poor tax of $15.", 15),
             new ReceiveMoneyCard(CardType.CHANCE, "Banks pays you dividend of $50.", 50),
-            new NearestSquareCard(CardType.CHANCE, "Advance token to nearest "+Railroad.class+".", Railroad.class)
+            new NearestSquareCard(CardType.CHANCE, "Advance token to nearest Railroad.", Railroad.class.getTypeName())
         };
     }
 
@@ -85,13 +85,11 @@ public class Board {
         return new Card[]{
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "Life insurance matters.\nCollect $100.", 100),
             new PayMoneyCard(CardType.COMMUNITY_CHEST, "Pay school tax of $150.", 150),
-            new MoveToCard(CardType.COMMUNITY_CHEST, "Go directly to jail.\nIf you pass GO, do not collect 200$.", boardSquares[10]),
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "Grand Opera opening.\nCollect $50 from each player for opening night seats.", 50, true),
             new PayMoneyCard(CardType.COMMUNITY_CHEST, "Doctor's fee, pay $50.", 50),
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "Xmas fund matures, collect $100.", 100),
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "From sale of stock you get $45", 45),
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "Income tax refund, collect $20", 20),
-            new GetOutOfJailFreeCard(CardType.COMMUNITY_CHEST, "Get out of jail free.\nThis card may be kept until needed."),
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "You inherit $100.", 100),
             new PayMoneyCard(CardType.COMMUNITY_CHEST, "Pay hospital $100.", 100),
             new ReceiveMoneyCard(CardType.COMMUNITY_CHEST, "Bank error in your favor, collect $100.", 100),
@@ -122,10 +120,13 @@ public class Board {
         return null;
     }
 
-    public Square getNearestSquareOfType(int startPosition, Class<Square> className) {
-        for (int i = startPosition; i < (boardSquares.length + startPosition); i++) {
-            if (className.isInstance(boardSquares[i])) {
-                return boardSquares[i];
+    public Square getNearestSquareOfType(int startPosition, String className) {
+        int max = boardSquares.length;
+        for (int i = startPosition; i < (max + startPosition - 1); i++) {
+            try {
+                if (Class.forName(className).isInstance(boardSquares[i % max])) return boardSquares[i % max];
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
         return null;
