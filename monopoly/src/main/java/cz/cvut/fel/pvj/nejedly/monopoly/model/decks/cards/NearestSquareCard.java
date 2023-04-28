@@ -12,15 +12,15 @@ public class NearestSquareCard extends Card {
         this.squareType = squareType;
     }
 
-    public void execute(Player player, Board board) {
+    public int getSteps(Player player, Board board) {
         int playerBoardPosition = player.getBoardPosition().getValue();
         Square square = board.getNearestSquareOfType(playerBoardPosition, squareType);
 
-        int steps = playerBoardPosition - square.getPosition();
+        int steps = square.getPosition() - playerBoardPosition;
         if (steps < 0) {
             steps += board.getBoardSquares().length;
         }
 
-        player.advancePositionBy(steps);
+        return steps;
     }
 }
