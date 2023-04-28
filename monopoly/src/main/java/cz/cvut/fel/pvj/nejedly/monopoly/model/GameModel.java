@@ -111,20 +111,15 @@ public class GameModel {
         Card card = null;
         if (cards.getCardType().equals(CardType.CHANCE)) {
             card = board.getChanceDeck().drawCard();
-            executeCard(player, card);
         } else if (cards.getCardType().equals(CardType.COMMUNITY_CHEST)) {
             card = board.getCommunityChestDeck().drawCard();
-            executeCard(player, card);
         }
+        executeCard(player, card);
         return card;
     }
 
     private void executeCard(Player player, Card card) {
-        if (card instanceof MoveToCard moveToCard) {
-            moveToCard.execute(player, board);
-        } else if (card instanceof NearestSquareCard nearestSquareCard) {
-            nearestSquareCard.execute(player, board);
-        } else if (card instanceof PayMoneyCard payMoneyCard) {
+        if (card instanceof PayMoneyCard payMoneyCard) {
             payMoneyCard.execute(player, players);
         } else if (card instanceof ReceiveMoneyCard receiveMoneyCard) {
             receiveMoneyCard.execute(player, players);
