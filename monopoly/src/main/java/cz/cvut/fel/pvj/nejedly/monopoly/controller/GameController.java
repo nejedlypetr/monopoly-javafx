@@ -3,6 +3,8 @@ package cz.cvut.fel.pvj.nejedly.monopoly.controller;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.GameModel;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.*;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.MoveToCard;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.NearestSquareCard;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.GameView;
 import cz.cvut.fel.pvj.nejedly.monopoly.view.MenuView;
@@ -65,6 +67,11 @@ public class GameController {
             new Alert(Alert.AlertType.INFORMATION, "Congratulations! You managed to get out of jail.", ButtonType.OK).show();
         }
 
+        // advance player and play sprite animation
+        movePlayer(steps);
+    }
+
+    private void movePlayer(int steps) {
         // advance player and play sprite animation
         SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(gameModel.getActivePlayer(), steps);
         spriteMovementAnimation.setOnFinished(actionEvent -> {
@@ -242,6 +249,14 @@ public class GameController {
                 card.toString(),
                 ButtonType.OK
         ).show();
+
+        if (card instanceof MoveToCard moveToCard) {
+            int steps = moveToCard.getSteps(player, gameModel.getBoard());
+            movePlayer(steps);
+        } else if (card instanceof NearestSquareCard nearestSquareCard) {
+            int steps = nearestSquareCard.getSteps(player, gameModel.getBoard());
+            movePlayer(steps);
+        }
     }
 
     private void steppedOnOwnable(Player player, Ownable ownable) {
