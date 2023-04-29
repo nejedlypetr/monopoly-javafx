@@ -26,6 +26,11 @@ public class MenuView {
         scene = new Scene(pane);
     }
 
+
+    /**
+     * Initializes the MenuView.
+     * Sets the scene style, pane size, and adds UI elements for starting a new game, loading a game, and exiting the program.
+     */
     public void init() {
         LOGGER.info("Initialize MenuView.");
 

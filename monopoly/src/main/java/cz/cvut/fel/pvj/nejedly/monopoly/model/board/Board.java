@@ -120,6 +120,13 @@ public class Board {
         return null;
     }
 
+    /**
+     * Returns the nearest {@link Square} of a given type on the {@link Board}, starting at a given position.
+     *
+     * @param startPosition the position to start searching from
+     * @param className the name of the class of the square type to search for
+     * @return the nearest square of the given type, or null if no such {@link Square} is found
+     */
     public Square getNearestSquareOfType(int startPosition, String className) {
         int max = boardSquares.length;
         for (int i = startPosition; i < (max + startPosition - 1); i++) {

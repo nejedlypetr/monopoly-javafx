@@ -10,6 +10,14 @@ import java.util.logging.*;
 public class Main extends Application {
     private final static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
+    /**
+     * The main entry point for the application.
+     * <p>This method initializes the logger and launches the application. After the
+     * application has finished running, the logger is closed.</p>
+     *
+     * @param args the command-line arguments passed to the application
+     * @throws IOException if there is an error configuring the logger
+     */
     public static void main(String[] args) throws IOException {
         FileHandler fileHandler = configureLogger(args);
         LOGGER.info("Starting application...");
@@ -20,6 +28,13 @@ public class Main extends Application {
         fileHandler.close();
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>This method creates a new {@link GameController} instance and initializes
+     * the game.</p>
+     *
+     * @param primaryStage the primary stage for the application
+     */
     @Override
     public void start(Stage primaryStage) {
         GameController gameController = new GameController();

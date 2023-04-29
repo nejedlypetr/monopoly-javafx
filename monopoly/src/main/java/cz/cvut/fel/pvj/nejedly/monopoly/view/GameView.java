@@ -55,7 +55,10 @@ public class GameView {
         saveGameButton.setOnAction(actionEvent -> controller.saveGameButtonPressed(scene));
         sprites = createSpriteImageViews();
     }
-
+    /**
+     * Initializes the GameView by setting up the scene, adding stylesheets,
+     * and initializing the BorderPanes for the left, center, and right sections of the view.
+     */
     public void init() {
         LOGGER.info("Initialize GameView.");
 
@@ -287,6 +290,16 @@ public class GameView {
         return endTurnButton;
     }
 
+    /**
+     * Displays a dialog box for selling a property
+     *
+     * <p>Displays a dialog box with a combo box listing the player's owned squares
+     * and a "Sell property" button to initiate the sale. The dialog also includes a "Cancel" button
+     * to close the dialog without taking any action.</p>
+     *
+     * @param comboBox   a ComboBox object containing the list of owned squares to be displayed in the dialog
+     * @param sellButton a Button object that initiates the sale of the selected property when pressed
+     */
     public void showSellPropertyDialog(ComboBox comboBox, Button sellButton) {
         LOGGER.info("Show sell property dialog.");
 

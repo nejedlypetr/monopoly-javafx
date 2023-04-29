@@ -20,6 +20,12 @@ public class ReceiveMoneyCard extends Card {
         this.fromEachPlayer = fromEachPlayer;
     }
 
+    /**
+     * Executes the action of the {@link Card} on the player and/or other players.
+     *
+     * @param player the {@link Player} who drew the {@link Card}
+     * @param players the list of players in the game
+     */
     public void execute(Player player, ArrayList<Player> players) {
         if (!fromEachPlayer) {
             player.changeMoneyBalanceBy(amount);
