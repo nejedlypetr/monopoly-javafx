@@ -2,7 +2,10 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
+import java.util.logging.Logger;
+
 public class Property extends Square implements Ownable {
+    private final static Logger LOGGER = Logger.getLogger(Property.class.getName());
     private final PropertyGroup group;
     private final int rent;
     private Player owner;
@@ -52,5 +55,8 @@ public class Property extends Square implements Ownable {
     @Override
     public void setOwner(Player player) {
         owner = player;
+
+        if (player == null) LOGGER.info(this.getName() + " set owner: null");
+        else LOGGER.info(this.getName() + " set owner: " + player.getName());
     }
 }
