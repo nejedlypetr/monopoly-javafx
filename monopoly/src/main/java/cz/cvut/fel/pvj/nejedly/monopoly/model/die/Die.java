@@ -3,8 +3,10 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.die;
 import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class Die {
+    private final static Logger LOGGER = Logger.getLogger(Die.class.getName());
     private final Random random = new Random();
     private final SimpleIntegerProperty dieOneRoll;
     private final SimpleIntegerProperty dieTwoRoll;
@@ -19,6 +21,9 @@ public class Die {
     public int roll() {
         dieOneRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
         dieTwoRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
+
+        LOGGER.info("Die rolled: "+dieOneRoll+" + "+dieTwoRoll+" = "+getDieRollTotal());
+
         return getDieRollTotal();
     }
 

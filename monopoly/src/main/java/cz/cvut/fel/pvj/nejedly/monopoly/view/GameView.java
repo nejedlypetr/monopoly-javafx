@@ -20,8 +20,10 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class GameView {
+    private final static Logger LOGGER = Logger.getLogger(GameView.class.getName());
     private final GameModel gameModel;
     private final GameController controller;
     private final Scene scene;
@@ -55,6 +57,8 @@ public class GameView {
     }
 
     public void init() {
+        LOGGER.info("Initialize GameView.");
+
         scene.getStylesheets().add("/stylesheets/GameViewStyles.css");
         pane.setPrefSize(1450, 850);
         initBorderPaneLeft();
@@ -66,6 +70,8 @@ public class GameView {
         HashMap<String, ImageView> sprites = new HashMap<>();
 
         for (Player player : gameModel.getPlayers()) {
+            LOGGER.fine("Create a sprite for "+player.getName());
+
             ImageView sprite = new ImageView(new Image("sprites/"+player.getSpriteImage()));
             sprite.setPreserveRatio(true);
             sprite.prefHeight(35);
@@ -81,6 +87,8 @@ public class GameView {
     }
 
     private void initBorderPaneCenter() {
+        LOGGER.fine("Initialize border pane center.");
+
         Pane center = new Pane();
         center.setMaxSize(850, 850);
         center.getChildren().add(boardImageView);
@@ -92,6 +100,8 @@ public class GameView {
     }
 
     private VBox createRollInformationBox() {
+        LOGGER.fine("Create roll information box.");
+
         Label label = new Label("LAST DICE ROLL");
         label.setId("heading3");
         Label description = new Label();
@@ -102,7 +112,9 @@ public class GameView {
         return vBox;
     }
 
-    private VBox createSquareInformationBox(Square square) {
+    private VBox createSquareInformationBox() {
+        LOGGER.fine("Create square information box.");
+
         Label label = new Label("CURRENT SQUARE");
         label.setId("heading3");
         Label description = new Label();
@@ -126,6 +138,8 @@ public class GameView {
     }
 
     private HBox createCurrentPlayerLabel() {
+        LOGGER.fine("Create current player label.");
+
         ImageView avatar = new ImageView();
         avatar.setFitWidth(40);
         avatar.setPreserveRatio(true);
@@ -147,8 +161,10 @@ public class GameView {
     }
 
     private void initBorderPaneRight() {
+        LOGGER.fine("Initialize border pane right.");
+
         HBox player = createCurrentPlayerLabel();
-        VBox square = createSquareInformationBox(new Property("House", 3, PropertyGroup.GREEN, 3, 2));
+        VBox square = createSquareInformationBox();
         VBox roll = createRollInformationBox();
 
         VBox saveButton = new VBox(saveGameButton);
@@ -165,6 +181,8 @@ public class GameView {
     }
 
     private VBox createPlayerInfoBox(Player player) {
+        LOGGER.fine("Create "+player.getName()+" info box.");
+
         ImageView avatar = createImage("/sprites/"+player.getSpriteImage(), 30);
         Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(() -> " "+player.getNameWithStatus()+" - ", player.isBankrupt(), player.isInJail()));
@@ -232,6 +250,8 @@ public class GameView {
     }
 
     private void initBorderPaneLeft() {
+        LOGGER.fine("Initialize border pane left.");
+
         VBox left = new VBox();
         left.setPrefSize(300, 845);
         left.setMaxSize(300, 845);
@@ -268,6 +288,8 @@ public class GameView {
     }
 
     public void showSellPropertyDialog(ComboBox comboBox, Button sellButton) {
+        LOGGER.info("Show sell property dialog.");
+
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20);

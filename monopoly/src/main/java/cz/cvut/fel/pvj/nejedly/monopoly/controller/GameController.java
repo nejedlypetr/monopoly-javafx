@@ -22,13 +22,17 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
+import java.util.logging.Logger;
 
 public class GameController {
+    private final static Logger LOGGER = Logger.getLogger(GameController.class.getName());
     private MenuView menuView;
     private GameView gameView;
     private GameModel gameModel;
 
     public void initialize() {
+        LOGGER.info("Initializing controller.");
+
         menuView = new MenuView(this);
         menuView.init();
 
@@ -37,9 +41,13 @@ public class GameController {
         stage.setResizable(false);
         stage.setScene(menuView.getScene());
         stage.show();
+
+        LOGGER.info("Initializing controller ended.");
     }
 
     public void startNewGameButtonPressed(Scene oldScene, int numberOfPlayers) {
+        LOGGER.info("Start new button pressed.");
+
         gameModel = new GameModel();
         gameModel.startNewGame(numberOfPlayers);
 
@@ -50,12 +58,18 @@ public class GameController {
     }
 
     private void changeScenes(Scene oldScene, Scene newScene) {
+        LOGGER.info("Changing scenes.");
+
         Stage stage = (Stage) oldScene.getWindow();
         stage.setScene(newScene);
         stage.show();
+
+        LOGGER.info("Changing scenes ended.");
     }
 
     public void rollButtonPressed() {
+        LOGGER.info("Roll button pressed.");
+
         int steps = gameModel.getDie().roll();
 
         // player in jail logic
@@ -67,6 +81,7 @@ public class GameController {
 
             // set player free from jail
             gameModel.getActivePlayer().setInJail(false);
+            LOGGER.info("Set player free from jail.");
             new Alert(Alert.AlertType.INFORMATION, "Congratulations! You managed to get out of jail.", ButtonType.OK).show();
         }
 
@@ -75,6 +90,8 @@ public class GameController {
     }
 
     private void movePlayer(int steps) {
+        LOGGER.info("Moving player.");
+
         // advance player and play sprite animation
         SequentialTransition spriteMovementAnimation = advancePlayerPositionBy(gameModel.getActivePlayer(), steps);
         spriteMovementAnimation.setOnFinished(actionEvent -> {
@@ -92,16 +109,22 @@ public class GameController {
             Square square = gameModel.getBoard().getBoardSquares()[activePlayerNewBoardPosition];
             stepOnSquare(gameModel.getActivePlayer(), square);
         });
+
+        LOGGER.info("Moving player ended.");
     }
 
     public void endTurnButtonPressed(Scene oldScene) {
+        LOGGER.info("End turn button pressed.");
+
         if (gameModel.hasGameEnded()) {
             changeScenes(oldScene, menuView.getScene());
+
             new Alert(
                     Alert.AlertType.INFORMATION,
                     "The winner is "+gameModel.getWinner().getName()+", congratulations!\n The game has ended, but you can always start a new one.",
                     ButtonType.OK
             ).showAndWait();
+            LOGGER.fine("Show winner alert. Winner is: "+gameModel.getWinner().getName());
         } else {
             gameModel.setNextPlayerAsActive();
             gameView.getRollButton().setDisable(false);
@@ -109,21 +132,28 @@ public class GameController {
     }
 
     public void purchasePropertyButtonPressed() {
+        LOGGER.info("Purchase property button pressed.");
+
         Player activePlayer = gameModel.getActivePlayer();
         int position = activePlayer.getBoardPosition().get();
         Square square = gameModel.getBoard().getBoardSquares()[position];
 
         if (!gameModel.getActivePlayer().purchaseSquare(square)) {
            new Alert(Alert.AlertType.INFORMATION, "This square is already purchased or cannot be purchased or you do not have enough funds.").showAndWait();
+           LOGGER.fine("Show cannot be purchased alert.");
         }
     }
 
     public void saveGameButtonPressed(Scene oldScene) {
+        LOGGER.info("Save game button pressed.");
+
         gameModel.save();
         changeScenes(oldScene, menuView.getScene());
     }
 
     public void loadGameButtonPressed(Scene oldScene) {
+        LOGGER.info("Load game button pressed.");
+
         try {
             gameModel = GameModel.load();
 
@@ -141,6 +171,8 @@ public class GameController {
     }
 
     private SequentialTransition advancePlayerPositionBy(Player player, int steps) {
+        LOGGER.info("Advance player's position animation started.");
+
         SequentialTransition sequentialTransition = new SequentialTransition();
 
         // create sprite movement animation
@@ -155,6 +187,8 @@ public class GameController {
 
             sequentialTransition.getChildren().add(t);
             sequentialTransition.getChildren().add(new PauseTransition(Duration.seconds(0.08)));
+
+            LOGGER.finest("Add transition to animation. Coordination X: "+t.getByX()+", Y: "+t.getByY());
         }
 
         // disable rollButton and endTurnButton while a sprite animation is running
@@ -162,7 +196,11 @@ public class GameController {
         gameView.getEndTurnButton().disableProperty().bind(sequentialTransition.statusProperty().isEqualTo(Animation.Status.RUNNING));
 
         player.advancePositionBy(steps);
+
         sequentialTransition.play();
+        LOGGER.info("Play animation of "+player.getName()+"'s sprite.");
+        LOGGER.info("Advance player's position animation ended.");
+
         return sequentialTransition;
     }
 
@@ -171,6 +209,7 @@ public class GameController {
         int y = 0;
 
         if (boardPosition < 0 || boardPosition > 39) {
+            LOGGER.warning("Board position out of valid range 0-39. Board position: " + boardPosition);
             throw new RuntimeException("Board position out of valid range 0-39. Board position: " + boardPosition);
         }
 
@@ -208,18 +247,21 @@ public class GameController {
             }
         }
 
+        LOGGER.finest("Board position calculated. Coordination X: "+x+", Y: "+y);
         return new int[]{x,y};
     }
 
     public void sellPropertyButtonPressed() {
+        LOGGER.info("Sell property button pressed.");
+
         ComboBox<Ownable> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(gameModel.getActivePlayer().getOwnedSquares());
 
         Button sellButton = new Button("Sell property");
         sellButton.setOnAction(actionEvent -> {
             Ownable selectedItem = comboBox.getValue();
+            if (selectedItem != null) LOGGER.fine("Selected property for sale: "+selectedItem.toString());
             gameModel.getActivePlayer().sellOwnedSquare((Square) selectedItem);
-            System.out.println(gameModel.getActivePlayer().getName() + " sold " + selectedItem); // todo LOGGER
             ((Stage) sellButton.getScene().getWindow()).close();
         });
 
@@ -239,6 +281,8 @@ public class GameController {
     }
 
     private void steppedOnTax(Player player, Tax tax) {
+        LOGGER.info("Stepped on Tax square.");
+
         player.stepOnTax(tax);
 
         new Alert(
@@ -246,9 +290,11 @@ public class GameController {
                 "You stepped on "+tax.getName()+" and have to pay $"+tax.getTax()+" on taxes.",
                 ButtonType.OK
         ).show();
+        LOGGER.info("Show stepped on Tax square alert.");
     }
 
     private void steppedOnGoToJail(Player player, GoToJail goToJail) {
+        LOGGER.info("Stepped on Go To Jail square.");
         player.stepOnGoToJail();
 
         // animate sprite movement to jail square
@@ -264,9 +310,12 @@ public class GameController {
                 "You have been send to jail! You stepped on Go To Jail square.\nTo get out of jail you need to roll doubles.",
                 ButtonType.OK
         ).show();
+        LOGGER.info("Show stepped on Go To Jail square alert.");
     }
 
     private void steppedOnCards(Player player, Cards cards) {
+        LOGGER.info("Stepped on Cards square.");
+
         Card card = gameModel.steppedOnCards(cards, player);
 
         new Alert(
@@ -274,6 +323,7 @@ public class GameController {
                 card.toString(),
                 ButtonType.OK
         ).show();
+        LOGGER.info("Show stepped on Cards square alert.");
 
         if (card instanceof MoveToCard moveToCard) {
             int steps = moveToCard.getSteps(player, gameModel.getBoard());
@@ -285,6 +335,8 @@ public class GameController {
     }
 
     private void steppedOnOwnable(Player player, Ownable ownable) {
+        LOGGER.info("Stepped on Ownable square.");
+
         if (gameModel.steppedOnOwnable(ownable, player)) return;
 
         int rent;
@@ -297,5 +349,6 @@ public class GameController {
                 "You stepped on "+((Square) ownable).getName()+", which is owned by "+ownable.getOwner().getName()+".\nPay rent $"+rent+".",
                 ButtonType.OK
         ).show();
+        LOGGER.info("Show stepped on Ownable square, which is owned by "+ownable.getOwner().getName());
     }
 }

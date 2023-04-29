@@ -2,7 +2,10 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 
+import java.util.logging.Logger;
+
 public class Railroad extends Square implements Ownable {
+    private final static Logger LOGGER = Logger.getLogger(Railroad.class.getName());
     private int rent = 0;
     private Player owner;
     private final int purchasePrice;
@@ -17,6 +20,9 @@ public class Railroad extends Square implements Ownable {
     @Override
     public void setOwner(Player player) {
         owner = player;
+
+        if (player == null) LOGGER.info(this.getName() + " set owner: null");
+        else LOGGER.info(this.getName() + " set owner: " + player.getName());
     }
 
     public Player getOwner() {
