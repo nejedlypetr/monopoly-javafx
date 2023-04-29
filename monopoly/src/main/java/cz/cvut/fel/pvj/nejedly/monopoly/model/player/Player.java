@@ -10,8 +10,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.Comparator;
+import java.util.logging.Logger;
 
 public class Player {
+    private final static Logger LOGGER = Logger.getLogger(Player.class.getName());
     private final String name;
     private final SimpleIntegerProperty boardPosition;
     private final SimpleIntegerProperty money;
@@ -47,19 +49,25 @@ public class Player {
     }
 
     public boolean purchaseSquare(Square square) {
+        LOGGER.info("Run purchase square.");
+
         if (!(square instanceof Ownable ownable) || ownedSquares.contains(square)) return false;
         if (!ownable.isOwned() && money.get() >= ownable.getPurchasePrice()) {
             changeMoneyBalanceBy(-ownable.getPurchasePrice());
             ownable.setOwner(this);
+            LOGGER.info("Set "+name+" as a owner of "+square.getName());
             return ownedSquares.add((Ownable) square);
         }
         return false;
     }
 
     public boolean sellOwnedSquare(Square square) {
+        LOGGER.info("Run sell owned square.");
+
         if (!(square instanceof Ownable ownable) || !ownedSquares.contains(square)) return false;
         changeMoneyBalanceBy(ownable.getPurchasePrice());
         ownable.setOwner(null);
+        LOGGER.info(name+" sold "+square.getName());
         return ownedSquares.remove(ownable);
     }
 
@@ -72,6 +80,7 @@ public class Player {
     }
 
     public void setBankrupt(boolean bankrupt) {
+        LOGGER.fine("Set "+name+" isBankrupt to "+bankrupt);
         isBankrupt.set(bankrupt);
     }
 
@@ -80,6 +89,7 @@ public class Player {
     }
 
     public void setInJail(boolean inJail) {
+        LOGGER.fine("Set "+name+" isInJail to "+inJail);
         isInJail.set(inJail);
     }
 
@@ -102,11 +112,15 @@ public class Player {
     }
 
     public void advancePositionBy(int steps) {
+        LOGGER.info("Advance "+name+"'s board position by "+steps+" steps.");
+
         int futurePosition = ((boardPosition.getValue() + steps) % 40);
         if ((boardPosition.getValue() > futurePosition) && !isInJail.getValue()) {
             changeMoneyBalanceBy(200); // player receives $200 salary when passing GO square
         }
         boardPosition.set(futurePosition);
+
+        LOGGER.info(name+"'s new board position is "+futurePosition);
     }
 
     public void advancePositionTo(Square square) {
@@ -122,6 +136,8 @@ public class Player {
     }
 
     public int getNumberOfOwnedUtilities() {
+        LOGGER.fine(name+" get number of owned Utilities.");
+
         int numberOfOwnedUtilities = 0;
         for (Ownable ownable : ownedSquares) {
             if (ownable instanceof Utility) numberOfOwnedUtilities++;
@@ -130,6 +146,8 @@ public class Player {
     }
 
     public int getNumberOfOwnedRailroads() {
+        LOGGER.fine(name+" get number of owned Railroads.");
+
         int numberOfOwnedRailroads = 0;
         for (Ownable ownable : ownedSquares) {
             if (ownable instanceof Railroad) numberOfOwnedRailroads++;
@@ -138,6 +156,8 @@ public class Player {
     }
 
     public void changeMoneyBalanceBy(int amount) {
+        LOGGER.info(name+" change money balance by "+amount);
+
         if ((-amount) > money.getValue()) {
             autoSellProperties(-amount);
         }
@@ -147,9 +167,13 @@ public class Player {
         } else {
             money.set(money.get() + amount);
         }
+
+        LOGGER.info(name+" new money balance is "+money.getValue());
     }
 
     private void autoSellProperties(int moneyNeeded) {
+        LOGGER.info("Run auto-sell properties.");
+
         int moneyGained = 0;
 
         ownedSquares.sort(Comparator.comparingInt(Ownable::getPurchasePrice)); // sort by purchase price
@@ -175,6 +199,8 @@ public class Player {
     }
 
     public JsonObject toJsonObject() {
+        LOGGER.info(name+" create JsonObject.");
+
         JsonObject player = new JsonObject();
         player.put("name", name);
         player.put("boardPosition", boardPosition.getValue());
@@ -192,6 +218,8 @@ public class Player {
     }
 
     public static Player fromJsonObject(JsonObject jsonObject, Board board, int spriteIndex) {
+        LOGGER.info("Create Player from JsonObject.");
+
         String name = (String) jsonObject.get("name");
         int boardPosition = Integer.parseInt(jsonObject.get("boardPosition").toString());
         int money = Integer.parseInt(jsonObject.get("money").toString());

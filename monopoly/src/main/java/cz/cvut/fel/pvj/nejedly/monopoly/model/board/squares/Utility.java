@@ -3,7 +3,10 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.player.Player;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.die.Die;
 
+import java.util.logging.Logger;
+
 public class Utility extends Square implements Ownable {
+    private final static Logger LOGGER = Logger.getLogger(Utility.class.getName());
     private final int purchasePrice;
     private Player owner;
 
@@ -15,6 +18,7 @@ public class Utility extends Square implements Ownable {
 
     @Override
     public int getRent() {
+        LOGGER.warning("Method not supported without arguments.");
         throw new UnsupportedOperationException("Method not supported without arguments.");
     }
 
@@ -43,6 +47,9 @@ public class Utility extends Square implements Ownable {
     @Override
     public void setOwner(Player player) {
         owner = player;
+
+        if (player == null) LOGGER.info(this.getName() + " set owner: null");
+        else LOGGER.info(this.getName() + " set owner: " + player.getName());
     }
 
     @Override

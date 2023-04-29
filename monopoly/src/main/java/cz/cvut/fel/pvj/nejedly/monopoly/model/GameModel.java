@@ -7,6 +7,7 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.Board;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Cards;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Ownable;
+import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Square;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.board.squares.Utility;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.CardType;
@@ -21,8 +22,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class GameModel {
+    private final static Logger LOGGER = Logger.getLogger(GameModel.class.getName());
     private Board board;
     private Die die;
     private ArrayList<Player> players;
@@ -43,18 +46,24 @@ public class GameModel {
     }
 
     public void setNextPlayerAsActive() {
+        LOGGER.info("Set next player as active.");
+
         int currentIndex = players.indexOf(activePlayer.get());
         currentIndex = (currentIndex + 1) % players.size();
 
         // bankrupt players' turns will be skipped
         while (players.get(currentIndex).isBankrupt().getValue()) {
+            LOGGER.finest("Bankrupt player skipped: "+players.get(currentIndex).getName());
             currentIndex = (currentIndex + 1) % players.size();
         }
 
         activePlayer.set(players.get(currentIndex));
+        LOGGER.info("Set active player: "+players.get(currentIndex).getName());
     }
 
     public boolean hasGameEnded() {
+        LOGGER.fine("Run has game ended check.");
+
         int numberOfBankruptPlayers = 0;
         for (Player player : players) {
             if (player.isBankrupt().getValue()) numberOfBankruptPlayers++;
@@ -63,6 +72,8 @@ public class GameModel {
     }
 
     public Player getWinner() {
+        LOGGER.fine("Run get winner.");
+
         for (Player player : players) {
             if (!player.isBankrupt().getValue()) return player;
         }
@@ -70,8 +81,11 @@ public class GameModel {
     }
 
     private ArrayList<Player> configurePlayers(int numberOfPlayers) {
+        LOGGER.info("Run configure players.");
+
         if (numberOfPlayers < 2 || numberOfPlayers > 6) {
-            throw new IllegalArgumentException("The number of players must be within the range of 2-6.");
+            LOGGER.warning("The number of players is out of the range of 2-6. Current number: \"+numberOfPlayers");
+            throw new IllegalArgumentException("The number of players must be within the range of 2-6. Current number: "+numberOfPlayers);
         }
 
         String[] SPRITES = new String[]{"boot.png", "car.png", "dog.png", "hat.png", "ship.png", "iron.png"};
@@ -82,6 +96,7 @@ public class GameModel {
 
         // choose a player that will start
         activePlayer.set(listOfPlayers.get(0));
+        LOGGER.info("Set a player that will start: "+listOfPlayers.get(0).getName());
 
         return listOfPlayers;
     }
@@ -99,6 +114,8 @@ public class GameModel {
     }
 
     public void startNewGame(int numberOfPlayers) {
+        LOGGER.info("Start new game with "+numberOfPlayers+" players.");
+
         players = configurePlayers(numberOfPlayers);
         board = new Board();
         die = new Die();
@@ -113,6 +130,8 @@ public class GameModel {
     }
 
     public boolean steppedOnOwnable(Ownable ownable, Player player) {
+        LOGGER.info("Run "+player.getName()+" stepped on Ownable square: "+((Square) ownable).getName());
+
         if (!ownable.isOwned() || player.getOwnedSquares().contains(ownable)) return true;
 
         if (ownable instanceof Utility utility) {
@@ -126,6 +145,8 @@ public class GameModel {
     }
 
     public Card steppedOnCards(Cards cards, Player player) {
+        LOGGER.info("Run "+player.getName()+" stepped on Cards square: "+cards.toString());
+
         Card card = null;
         if (cards.getCardType().equals(CardType.CHANCE)) {
             card = board.getChanceDeck().drawCard();
@@ -137,6 +158,8 @@ public class GameModel {
     }
 
     private void executeCard(Player player, Card card) {
+        LOGGER.info(player.getName()+" executes card: "+card.toString());
+
         if (card instanceof PayMoneyCard payMoneyCard) {
             payMoneyCard.execute(player, players);
         } else if (card instanceof ReceiveMoneyCard receiveMoneyCard) {
@@ -145,6 +168,8 @@ public class GameModel {
     }
 
     private JsonObject toJsonObject() {
+        LOGGER.info("Create JsonObject.");
+
         JsonArray playersJsonArray = new JsonArray();
         for (Player player : players) {
             playersJsonArray.add(player.toJsonObject());
@@ -158,21 +183,28 @@ public class GameModel {
     }
 
     public void save() {
+        LOGGER.info("Save game.");
+
         JsonObject jsonObject = toJsonObject();
         try (FileWriter fileWriter = new FileWriter("saved-game.json")) {
             fileWriter.write(jsonObject.toJson());
         } catch (IOException e) {
+            LOGGER.warning("Save game IOException: "+e.toString());
             throw new RuntimeException(e);
         }
     }
 
     public static GameModel load() throws FileNotFoundException, JsonException {
+        LOGGER.info("Load game.");
+
         FileReader fileReader = new FileReader("saved-game.json");
         JsonObject jsonObject = (JsonObject) Jsoner.deserialize(fileReader);
         return fromJsonObject(jsonObject);
     }
 
     private static Player getPlayerByName(ArrayList<Player> listOfPlayers, String name) {
+        LOGGER.fine("Get player by name: "+name);
+
         for (Player player : listOfPlayers) {
             if (player.getName().equals(name)) return player;
         }
@@ -180,6 +212,8 @@ public class GameModel {
     }
 
     private static GameModel fromJsonObject(JsonObject jsonObject) {
+        LOGGER.info("Create GameModel from JsonObject.");
+
         Board board = new Board();
         ArrayList<Player> playerArrayList = new ArrayList<>();
 

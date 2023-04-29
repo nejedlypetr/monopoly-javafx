@@ -3,8 +3,10 @@ package cz.cvut.fel.pvj.nejedly.monopoly.model.decks;
 import cz.cvut.fel.pvj.nejedly.monopoly.model.decks.cards.Card;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class Deck {
+    private final static Logger LOGGER = Logger.getLogger(Deck.class.getName());
     private int currentTopCardIndex;
     private final Card[] cards;
 
@@ -14,6 +16,8 @@ public class Deck {
     }
 
     public Card[] shuffle() {
+        LOGGER.info("Shuffle deck.");
+
         Random random = new Random();
         for (int i = cards.length; i > 1; i--) {
             swap(i - 1, random.nextInt(i));
@@ -22,6 +26,8 @@ public class Deck {
     }
 
     public Card drawCard() {
+        LOGGER.info("Draw card.");
+
         Card topCard = cards[currentTopCardIndex];
         currentTopCardIndex++;
         if (currentTopCardIndex == cards.length) currentTopCardIndex = 0;

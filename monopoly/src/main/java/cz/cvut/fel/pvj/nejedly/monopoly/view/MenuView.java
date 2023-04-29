@@ -11,7 +11,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.logging.Logger;
+
 public class MenuView {
+    private final static Logger LOGGER = Logger.getLogger(MenuView.class.getName());
     private final Scene scene;
     private final Pane pane;
     private final GameController controller;
@@ -24,6 +27,8 @@ public class MenuView {
     }
 
     public void init() {
+        LOGGER.info("Initialize MenuView.");
+
         scene.getStylesheets().add("/stylesheets/MenuViewStyles.css");
         pane.setPrefSize(800, 800);
 
@@ -54,6 +59,8 @@ public class MenuView {
     }
 
     private HBox createNewGameControls(int numberOfButtons, int startingNumberOfPlayers) {
+        LOGGER.fine("Create new game controls.");
+
         HBox newGameButtons = new HBox();
         for (int i = startingNumberOfPlayers; i < (startingNumberOfPlayers + numberOfButtons); i++) {
             Button newGameButton = createNewGameButton(i);
