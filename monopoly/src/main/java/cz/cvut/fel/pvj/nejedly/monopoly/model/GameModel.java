@@ -45,6 +45,16 @@ public class GameModel {
         this.activePlayer = new SimpleObjectProperty<>(activePlayer);
     }
 
+    /**
+     * Sets the next player in the game as active.
+     *
+     * <p>This method sets the next player in the game as active. The player who is currently active
+     * is determined based on the index of the current active player in the list of players. The next
+     * player is determined by incrementing the current index by 1, and wrapping around to the start of
+     * the list if the index exceeds the number of players. The method also skips the turns of bankrupt
+     * players by checking if the player at the current index is bankrupt, and incrementing the index
+     * until a non-bankrupt player is found.</p>
+     */
     public void setNextPlayerAsActive() {
         LOGGER.info("Set next player as active.");
 
@@ -61,6 +71,16 @@ public class GameModel {
         LOGGER.info("Set active player: "+players.get(currentIndex).getName());
     }
 
+    /**
+     * Checks if the game has ended.
+     *
+     * <p>This method checks if the game has ended by counting the number of bankrupt players in the game.
+     * If the number of bankrupt players is equal to the number of players minus one, the game is
+     * considered to have ended. A game is considered to have ended when only one player remains
+     * solvent.</p>
+     *
+     * @return true if the game has ended, false otherwise.
+     */
     public boolean hasGameEnded() {
         LOGGER.fine("Run has game ended check.");
 
@@ -71,6 +91,15 @@ public class GameModel {
         return numberOfBankruptPlayers == (players.size() - 1);
     }
 
+    /**
+     * Returns the winner of the game.
+     *
+     * <p>This method returns the winner of the game, which is the last player remaining solvent. The
+     * method iterates over the list of players in the game, and returns the first player that is not
+     * bankrupt. If no player is found, the method returns null.</p>
+     *
+     * @return the winner of the game, or null if no winner is found.
+     */
     public Player getWinner() {
         LOGGER.fine("Run get winner.");
 
@@ -113,6 +142,15 @@ public class GameModel {
         return players;
     }
 
+    /**
+     * Starts a new game with the specified number of players.
+     *
+     * This method starts a new game with the specified number of players. The method initializes the
+     * game by creating a new board and a new set of dice. It also configures the players in the game
+     * by calling the private helper method `configurePlayers()`.
+     *
+     * @param numberOfPlayers the number of players in the game.
+     */
     public void startNewGame(int numberOfPlayers) {
         LOGGER.info("Start new game with "+numberOfPlayers+" players.");
 
@@ -129,6 +167,19 @@ public class GameModel {
         return activePlayer;
     }
 
+    /**
+     * Processes the player stepping on an ownable square.
+     *
+     * <p>This method processes the player stepping on an ownable square. If the square is not owned or is
+     * owned by the player, the method returns true. If the square is owned by another player, the
+     * method deducts the appropriate rent from the current player's balance and adds it to the owner's
+     * balance. If the ownable square is a utility, the rent is calculated based on the value of the
+     * dice roll and the number of utilities owned by the owner.</p>
+     *
+     * @param ownable the ownable square that the player has stepped on.
+     * @param player the player who has stepped on the ownable square.
+     * @return true if the square is not owned or is owned by the player, false otherwise.
+     */
     public boolean steppedOnOwnable(Ownable ownable, Player player) {
         LOGGER.info("Run "+player.getName()+" stepped on Ownable square: "+((Square) ownable).getName());
 
@@ -144,6 +195,19 @@ public class GameModel {
         return false;
     }
 
+    /**
+     * Processes the player stepping on a cards square.
+     *
+     * <p>This method processes the player stepping on a cards square. If the square is a chance square,
+     * the method draws a chance card from the game board's chance deck. If the square is a community
+     * chest square, the method draws a community chest card from the game board's community chest
+     * deck. The card's effect is then executed using the executeCard() method. The drawn card is
+     * returned by the method.</p>
+     *
+     * @param cards the type of cards square that the player has stepped on.
+     * @param player the player who has stepped on the cards square.
+     * @return the card drawn from the deck and executed by the player.
+     */
     public Card steppedOnCards(Cards cards, Player player) {
         LOGGER.info("Run "+player.getName()+" stepped on Cards square: "+cards.toString());
 
@@ -182,6 +246,16 @@ public class GameModel {
         return jsonObject;
     }
 
+    /**
+     * Saves the current game state to a JSON file.
+     *
+     * <p>This method saves the current state of the game to a JSON file named "saved-game.json". The method
+     * first converts the game state to a JSON object using the toJsonObject() method, then writes the
+     * JSON object to the file using a FileWriter. If an IOException occurs while writing the file, the
+     * method logs a warning message and throws a RuntimeException.</p>
+     *
+     * @throws RuntimeException if an IOException occurs while writing the saved game file.
+     */
     public void save() {
         LOGGER.info("Save game.");
 
@@ -194,6 +268,20 @@ public class GameModel {
         }
     }
 
+    /**
+     * Loads a previously saved game state from a JSON file.
+     *
+     * <p>This method reads a previously saved game state from a JSON file named "saved-game.json". The
+     * method first creates a FileReader object to read the file, then deserializes the JSON object.
+     * The deserialized JSON object is then converted back into a GameModel
+     * object using the fromJsonObject() method. If the file does not exist or cannot be read, the
+     * method throws a FileNotFoundException. If the JSON object cannot be deserialized, the method
+     * throws a JsonException.</p>
+     *
+     * @return a GameModel object representing the previously saved game state.
+     * @throws FileNotFoundException if the saved game file cannot be found or read.
+     * @throws JsonException if the saved game file cannot be deserialized.
+     */
     public static GameModel load() throws FileNotFoundException, JsonException {
         LOGGER.info("Load game.");
 

@@ -15,6 +15,11 @@ public class Deck {
         currentTopCardIndex = 0;
     }
 
+    /**
+     * Shuffles the deck of cards using the Fisher-Yates shuffle algorithm.
+     *
+     * @return the shuffled {@link Deck} of cards
+     */
     public Card[] shuffle() {
         LOGGER.info("Shuffle deck.");
 
@@ -25,6 +30,11 @@ public class Deck {
         return cards;
     }
 
+    /**
+     * Draws the top card from the deck and place it to the bottom of the deck.
+     *
+     * @return the top {@link Card} from the deck
+     */
     public Card drawCard() {
         LOGGER.info("Draw card.");
 

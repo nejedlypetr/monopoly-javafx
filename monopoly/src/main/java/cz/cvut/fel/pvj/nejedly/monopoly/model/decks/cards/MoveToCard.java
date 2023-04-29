@@ -16,6 +16,13 @@ public class MoveToCard extends Card {
         return square;
     }
 
+    /**
+     * Calculates the number of steps the {@link Player} needs to take to reach the current {@link Square}.
+     *
+     * @param player the {@link Player} who is moving
+     * @param board the game {@link Board}
+     * @return the number of steps the {@link Player} needs to take to reach the current {@link Square}
+     */
     public int getSteps(Player player, Board board) {
         int steps = square.getPosition() - player.getBoardPosition().getValue();
         if (steps < 0) {

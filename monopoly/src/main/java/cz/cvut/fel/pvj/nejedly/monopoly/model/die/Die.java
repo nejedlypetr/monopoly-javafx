@@ -18,6 +18,11 @@ public class Die {
         dieTwoRoll = new SimpleIntegerProperty(0);
     }
 
+    /**
+     * Rolls two dice and returns their total value.
+     *
+     * @return the total value of two rolled dice
+     */
     public int roll() {
         dieOneRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
         dieTwoRoll.set(random.nextInt(dieMinValue, dieMaxValue + 1));
@@ -35,6 +40,11 @@ public class Die {
         return dieTwoRoll;
     }
 
+    /**
+     * Returns the total value of two dice rolls.
+     *
+     * @return the sum of the two dice rolls
+     */
     public int getDieRollTotal() {
         return dieOneRoll.add(dieTwoRoll).intValue();
     }

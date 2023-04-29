@@ -30,6 +30,13 @@ public class GameController {
     private GameView gameView;
     private GameModel gameModel;
 
+    /**
+     * Initializes the controller and displays the main menu.
+     *
+     * <p>This method creates a new {@link MenuView} instance and initializes it. It
+     * then creates a new JavaFX {@link Stage} and sets the scene to the main menu.
+     * Finally, it displays the stage.</p>
+     */
     public void initialize() {
         LOGGER.info("Initializing controller.");
 
@@ -45,6 +52,17 @@ public class GameController {
         LOGGER.info("Initializing controller ended.");
     }
 
+    /**
+     * Handles the event when the "Start New Game" button is pressed.
+     *
+     * <p>This method creates a new {@link GameModel} instance and starts a new game
+     * with the specified number of players. It then creates a new {@link GameView}
+     * instance and initializes it. Finally, it changes the scene from the old scene
+     * to the game scene.</p>
+     *
+     * @param oldScene the old scene that is being replaced
+     * @param numberOfPlayers the number of players for the new game
+     */
     public void startNewGameButtonPressed(Scene oldScene, int numberOfPlayers) {
         LOGGER.info("Start new button pressed.");
 
@@ -67,6 +85,16 @@ public class GameController {
         LOGGER.info("Changing scenes ended.");
     }
 
+    /**
+     * Handles the event when the "Roll" button is pressed.
+     *
+     * <p>This method rolls the game's die to determine the number of steps to move
+     * the active player. If the active player is in jail and does not roll doubles,
+     * the "Roll" button is disabled and the method returns without advancing
+     * the player. If the player rolls doubles while in jail, they are set free
+     * from jail and an alert is displayed. Finally, the player is advanced and
+     * the sprite animation is played.</p>
+     */
     public void rollButtonPressed() {
         LOGGER.info("Roll button pressed.");
 
@@ -113,6 +141,17 @@ public class GameController {
         LOGGER.info("Moving player ended.");
     }
 
+
+    /**
+     * Handles the event when the "End Turn" button is pressed.
+     *
+     * <p>This method checks whether the game has ended. If it has, it changes the
+     * scene to the main menu, displays an alert with the winner's name, and logs
+     * a message indicating that the game has ended. Otherwise, it sets the next
+     * player as active and enables the "Roll" button for the new active player.</p>
+     *
+     * @param oldScene the scene to be replaced with the new scene when the game ends
+     */
     public void endTurnButtonPressed(Scene oldScene) {
         LOGGER.info("End turn button pressed.");
 
@@ -131,6 +170,13 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles the event when the "Purchase Property" button is pressed.
+     *
+     * <p>This method checks whether the active player can purchase the square that they
+     * are currently on. If they can, it purchases the square and updates the view. If
+     * they cannot, it displays an alert indicating why the purchase cannot be made.</p>
+     */
     public void purchasePropertyButtonPressed() {
         LOGGER.info("Purchase property button pressed.");
 
@@ -144,6 +190,14 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles the event when the "Save Game" button is pressed.
+     *
+     * <p>This method saves the current state of the game to a file and returns the user
+     * to the main menu.</p>
+     *
+     * @param oldScene the scene that was displayed before the save game scene
+     */
     public void saveGameButtonPressed(Scene oldScene) {
         LOGGER.info("Save game button pressed.");
 
@@ -151,6 +205,16 @@ public class GameController {
         changeScenes(oldScene, menuView.getScene());
     }
 
+    /**
+     * Handles the event when the "Load Game" button is pressed.
+     *
+     * <p>This method loads the state of the game from a file and displays the game view.
+     * If the file is not found or there is an error parsing the JSON, an error message is displayed
+     * and a RuntimeException is thrown.</p>
+     *
+     * @param oldScene the scene that was displayed before the load game scene
+     * @throws RuntimeException if the file is not found or there is an error parsing the JSON
+     */
     public void loadGameButtonPressed(Scene oldScene) {
         LOGGER.info("Load game button pressed.");
 
@@ -204,6 +268,13 @@ public class GameController {
         return sequentialTransition;
     }
 
+    /**
+     * Calculates the x and y coordinates of the sprite on the board for the given board position.
+     *
+     * @param boardPosition the position of the sprite on the board
+     * @return an integer array containing the x and y coordinates of the sprite on the board
+     * @throws RuntimeException if boardPosition is less than 0 or greater than 39
+     */
     public int[] calculateSpritePositionOnBoard(int boardPosition) {
         int x = 0;
         int y = 0;
@@ -251,6 +322,12 @@ public class GameController {
         return new int[]{x,y};
     }
 
+    /**
+     * Handles the event when the "Sell Property" button is pressed.
+     *
+     * <p>Displays a dialog box with a combo box of the player's owned properties to select from
+     * and a button to initiate the sale of the selected property.</p>
+     */
     public void sellPropertyButtonPressed() {
         LOGGER.info("Sell property button pressed.");
 

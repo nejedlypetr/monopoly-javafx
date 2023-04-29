@@ -48,6 +48,20 @@ public class Player {
         }
     }
 
+    /**
+     * Attempts to purchase the specified {@link Square} by the {@link Player}. If successful, the player becomes the owner of
+     * the square and the player's balance is reduced by the purchase price of the square.
+     *
+     * @param square The {@link Square} to be purchased.
+     * @return {@code true} if the square was successfully purchased, {@code false} otherwise.
+     *     The method will return {@code false} if:
+     *     <ul>
+     *         <li>The square is not an instance of {@link Ownable}.</li>
+     *         <li>The square is already owned by this {@link Player}.</li>
+     *         <li>The square is already owned by another {@link Player}.</li>
+     *         <li>The {@link Player}'s balance is not sufficient to purchase the {@link Square}.</li>
+     *     </ul>
+     */
     public boolean purchaseSquare(Square square) {
         LOGGER.info("Run purchase square.");
 
@@ -61,6 +75,18 @@ public class Player {
         return false;
     }
 
+    /**
+     * Attempts to sell the specified owned square by the player. If successful, the player's balance is increased
+     * by the purchase price of the square, and the square is no longer owned by any player.
+     *
+     * @param square The square to be sold.
+     * @return {@code true} if the square was successfully sold, {@code false} otherwise.
+     *     The method will return {@code false} if:
+     *     <ul>
+     *         <li>The square is not an instance of {@link Ownable}.</li>
+     *         <li>The square is not owned by this player.</li>
+     *     </ul>
+     */
     public boolean sellOwnedSquare(Square square) {
         LOGGER.info("Run sell owned square.");
 
@@ -111,6 +137,13 @@ public class Player {
         this.boardPosition.set(boardPosition);
     }
 
+    /**
+     * Advances this object's position on the board by a specified number of steps,
+     * and updates its board position and money balance accordingly.
+     * If this object passes the GO square, it will receive a $200 salary.
+     *
+     * @param steps the number of steps to advance this object's position by
+     */
     public void advancePositionBy(int steps) {
         LOGGER.info("Advance "+name+"'s board position by "+steps+" steps.");
 
@@ -135,6 +168,11 @@ public class Player {
         return spriteImage;
     }
 
+    /**
+     * Returns the number of utility squares owned by this object.
+     *
+     * @return the number of utility squares owned by this object
+     */
     public int getNumberOfOwnedUtilities() {
         LOGGER.fine(name+" get number of owned Utilities.");
 
@@ -145,6 +183,11 @@ public class Player {
         return numberOfOwnedUtilities;
     }
 
+    /**
+     * Returns the number of railroad squares owned by this object.
+     *
+     * @return the number of railroad squares owned by this object
+     */
     public int getNumberOfOwnedRailroads() {
         LOGGER.fine(name+" get number of owned Railroads.");
 
@@ -155,6 +198,13 @@ public class Player {
         return numberOfOwnedRailroads;
     }
 
+    /**
+     * Changes this object's money balance by a specified amount, and logs the transaction.
+     * If the new balance becomes negative, this method will automatically sell off this object's properties
+     * to cover the debt.
+     *
+     * @param amount the amount to change this object's money balance by
+     */
     public void changeMoneyBalanceBy(int amount) {
         LOGGER.info(name+" change money balance by "+amount);
 
@@ -198,6 +248,11 @@ public class Player {
         changeMoneyBalanceBy(-tax.getTax());
     }
 
+    /**
+     * Creates and returns a {@link JsonObject} representing this object's current state.
+     *
+     * @return a {@link JsonObject} representing this object's current state
+     */
     public JsonObject toJsonObject() {
         LOGGER.info(name+" create JsonObject.");
 
@@ -217,6 +272,14 @@ public class Player {
         return player;
     }
 
+    /**
+     * Creates and returns a new {@link Player} object from a {@link JsonObject}.
+     *
+     * @param jsonObject the {@link JsonObject} from which to create the {@link Player} object
+     * @param board the {@link Board} object representing the game board
+     * @param spriteIndex the index of the {@link Player}'s sprite
+     * @return a new {@link Player} object with the specified properties
+     */
     public static Player fromJsonObject(JsonObject jsonObject, Board board, int spriteIndex) {
         LOGGER.info("Create Player from JsonObject.");
 
