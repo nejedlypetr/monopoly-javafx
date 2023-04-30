@@ -4,12 +4,7 @@ The application is written in Java and features a GUI written in JavaFX.
 
 <img src="monopoly-menu.png" alt="monopoly menu">
 
-<figure class="video_container">
-  <video autoplay loop muted controls="false">
-    <source src="monopoly-demo.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</figure>
+<iframe src="monopoly-demo.mp4?autoplay=1&loop=1&controls=0" frameborder="0"></iframe>
 
 ## Table of Contents
 - [Monopoly JavaFX](#monopoly-javafx)
