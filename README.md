@@ -4,14 +4,23 @@ The application is written in Java and features a GUI written in JavaFX.
 
 <img src="monopoly-menu.png" alt="monopoly menu">
 
+<figure class="video_container">
+  <video autoplay loop muted controls="false">
+    <source src="monopoly-demo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</figure>
+
 ## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Game features](#game-features)
-- [Game rules and mechanics](#game-rules-and-mechanics)
-- [Configure logging](#configure-logging)
-- [Save game file format](#save-game-file-format)
-- [Data Object Model](#data-object-model)
+- [Monopoly JavaFX](#monopoly-javafx)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Game features](#game-features)
+  - [Game rules and mechanics](#game-rules-and-mechanics)
+  - [Configure logging](#configure-logging)
+  - [Save game file format](#save-game-file-format)
+  - [Data Object Model](#data-object-model)
 
 ## Installation
 To run the app you need to have installed:
@@ -48,11 +57,6 @@ Alternatively, use an IDE of your choice and set a run configuration.
 - Save & load game
 
 ## Game rules and mechanics
-<video autoplay loop muted>
-  <source src="monopoly-demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
 Monopoly is a complex game full of rules and exceptions. There is a list of the most important rules that were implemented:<br>
 - Player receives $200 after passing the GO square (not if the player is going to Jail)
 - During a player's turn, the player can buy and sell Properties.
