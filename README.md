@@ -5,16 +5,13 @@ The application is written in Java and features a GUI written in JavaFX.
 <img src="monopoly-menu.png" alt="monopoly menu">
 
 ## Table of Contents
-
-- [Monopoly JavaFX](#monopoly-javafx)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Game features](#game-features)
-  - [Game rules and mechanics](#game-rules-and-mechanics)
-  - [Configure logging](#configure-logging)
-  - [Save game file format](#save-game-file-format)
-  - [Data Object Model](#data-object-model)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Game features](#game-features)
+- [Game rules and mechanics](#game-rules-and-mechanics)
+- [Configure logging](#configure-logging)
+- [Save game file format](#save-game-file-format)
+- [Data Object Model](#data-object-model)
 
 ## Installation
 To run the app you need to have installed:
