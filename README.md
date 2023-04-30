@@ -21,12 +21,12 @@ To run the app you need to have installed:
 Dependencies automatically maintained by **Maven**:
 - `org.openjfx: javafx-controls: 19`
 - `com.github.cliftonlabs: json-simple: 4.0.1`
-- `junit` by todo and edit
+- `org.junit.jupiter: junit-jupiter: 5.9.2`
 
 ## Usage
-1. Clone the repository
-2. Navigate to the *nejedpe4/monopoly* directory `$ cd nejedpe4/monopoly`
-3. Start the application `$ mvn clean javafx:run`<br>
+1. Clone the repository.
+2. Navigate to the *nejedpe4/monopoly* directory: `$ cd nejedpe4/monopoly`
+3. Start the application: `$ mvn clean javafx:run`<br>
 
 Alternatively, use an IDE of your choice and set a run configuration.
 
