@@ -4,11 +4,7 @@ The application is written in Java and features a GUI written in JavaFX.
 
 <img src="monopoly-menu.png" alt="monopoly menu">
 
-<iframe src="monopoly-demo.mp4?autoplay=1&loop=1&controls=0" frameborder="0"></iframe>
-
 ## Table of Contents
-- [Monopoly JavaFX](#monopoly-javafx)
-  - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
   - [Game features](#game-features)
