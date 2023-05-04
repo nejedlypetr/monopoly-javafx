@@ -225,13 +225,16 @@ public class Player {
         LOGGER.info("Run auto-sell properties.");
 
         int moneyGained = 0;
+        int totalOwnedSquares = ownedSquares.size();
 
         ownedSquares.sort(Comparator.comparingInt(Ownable::getPurchasePrice)); // sort by purchase price
-        for (Ownable ownable : ownedSquares) {
-            if (moneyGained < moneyNeeded) {
-                sellOwnedSquare((Square) ownable);
-                moneyGained += ownable.getPurchasePrice();
-            }
+
+        // note: cannot loop through ownedSquares because sellOwnedSquare() removes an item from ownedSquares
+        for (int i = 0; i < totalOwnedSquares; i++) {
+            if (moneyGained >= moneyNeeded) return;
+            Ownable ownable = ownedSquares.get(0);
+            sellOwnedSquare((Square) ownable);
+            moneyGained += ownable.getPurchasePrice();
         }
 
         if (moneyGained < moneyNeeded) {
