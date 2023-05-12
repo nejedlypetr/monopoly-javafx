@@ -22,6 +22,7 @@ Dependencies automatically maintained by **Maven**:
 - `org.openjfx: javafx-controls: 19`
 - `com.github.cliftonlabs: json-simple: 4.0.1`
 - `org.junit.jupiter: junit-jupiter: 5.9.2`
+- `org.mockito: mockito-core: 5.3.1`
 
 ## Usage
 1. Clone the repository.
