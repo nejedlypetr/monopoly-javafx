@@ -111,15 +111,6 @@ public class Board {
         return communityChestDeck;
     }
 
-    public Square getSquareByName(String name) {
-        for (Square boardSquare : boardSquares) {
-            if (boardSquare.getName().equals(name)) {
-                return boardSquare;
-            }
-        }
-        return null;
-    }
-
     /**
      * Returns the nearest {@link Square} of a given type on the {@link Board}, starting at a given position.
      *

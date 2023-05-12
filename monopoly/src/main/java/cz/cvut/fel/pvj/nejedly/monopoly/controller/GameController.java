@@ -276,8 +276,8 @@ public class GameController {
      * @throws RuntimeException if boardPosition is less than 0 or greater than 39
      */
     public int[] calculateSpritePositionOnBoard(int boardPosition) {
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
 
         if (boardPosition < 0 || boardPosition > 39) {
             LOGGER.warning("Board position out of valid range 0-39. Board position: " + boardPosition);
@@ -337,7 +337,7 @@ public class GameController {
         Button sellButton = new Button("Sell property");
         sellButton.setOnAction(actionEvent -> {
             Ownable selectedItem = comboBox.getValue();
-            if (selectedItem != null) LOGGER.fine("Selected property for sale: "+selectedItem.toString());
+            if (selectedItem != null) LOGGER.fine("Selected property for sale: " + selectedItem);
             gameModel.getActivePlayer().sellOwnedSquare((Square) selectedItem);
             ((Stage) sellButton.getScene().getWindow()).close();
         });

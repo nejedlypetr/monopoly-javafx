@@ -145,9 +145,9 @@ public class GameModel {
     /**
      * Starts a new game with the specified number of players.
      *
-     * This method starts a new game with the specified number of players. The method initializes the
+     * <p>This method starts a new game with the specified number of players. The method initializes the
      * game by creating a new board and a new set of dice. It also configures the players in the game
-     * by calling the private helper method `configurePlayers()`.
+     * by calling the private helper method `configurePlayers()`.</p>
      *
      * @param numberOfPlayers the number of players in the game.
      */
@@ -263,7 +263,7 @@ public class GameModel {
         try (FileWriter fileWriter = new FileWriter("saved-game.json")) {
             fileWriter.write(jsonObject.toJson());
         } catch (IOException e) {
-            LOGGER.warning("Save game IOException: "+e.toString());
+            LOGGER.warning("Save game IOException: " + e);
             throw new RuntimeException(e);
         }
     }
