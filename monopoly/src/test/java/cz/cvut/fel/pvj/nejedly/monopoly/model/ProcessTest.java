@@ -66,7 +66,7 @@ public class ProcessTest {
      *   3) Player 1 bought the Ownable.
      *   4) Player 2 advanced by 3 steps.
      *   5) Player 2 stepped on Ownable owned by Player 1.
-     *   6} Player 2 paid rent to Player 1.
+     *   6) Player 2 paid rent to Player 1.
      */
     void playerBoughtPropertyAndThenAnotherPlayerSteppedOnIt() {
         // arrange

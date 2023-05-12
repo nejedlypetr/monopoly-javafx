@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 public class Railroad extends Square implements Ownable {
     private final static Logger LOGGER = Logger.getLogger(Railroad.class.getName());
-    private int rent = 0;
+    private final int rent;
     private Player owner;
     private final int purchasePrice;
 

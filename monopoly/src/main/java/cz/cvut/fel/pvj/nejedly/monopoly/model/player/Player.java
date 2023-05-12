@@ -133,10 +133,6 @@ public class Player {
         return boardPosition;
     }
 
-    public void setBoardPosition(int boardPosition) {
-        this.boardPosition.set(boardPosition);
-    }
-
     /**
      * Advances this object's position on the board by a specified number of steps,
      * and updates its board position and money balance accordingly.
@@ -154,10 +150,6 @@ public class Player {
         boardPosition.set(futurePosition);
 
         LOGGER.info(name+"'s new board position is "+futurePosition);
-    }
-
-    public void advancePositionTo(Square square) {
-        //todo: implement method
     }
 
     public SimpleIntegerProperty getMoney() {

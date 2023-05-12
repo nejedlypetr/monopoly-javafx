@@ -9,7 +9,7 @@ public class Property extends Square implements Ownable {
     private final PropertyGroup group;
     private final int rent;
     private Player owner;
-    private int purchasePrice;
+    private final int purchasePrice;
 
     public Property(String name, int position, PropertyGroup group, int rent, int purchasePrice) {
         super(name, position);

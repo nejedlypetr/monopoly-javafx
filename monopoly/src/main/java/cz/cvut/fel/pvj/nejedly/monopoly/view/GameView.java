@@ -42,7 +42,7 @@ public class GameView {
 
         pane = new BorderPane();
         scene = new Scene(pane);
-        boardImageView = createImage("/images/board.jpg", 850);;
+        boardImageView = createImage("/images/board.jpg", 850);
         rollButton = new Button("ROLL DICE");
         rollButton.setOnAction(actionEvent -> controller.rollButtonPressed());
         endTurnButton = new Button("END TURN");
@@ -300,7 +300,7 @@ public class GameView {
      * @param comboBox   a ComboBox object containing the list of owned squares to be displayed in the dialog
      * @param sellButton a Button object that initiates the sale of the selected property when pressed
      */
-    public void showSellPropertyDialog(ComboBox comboBox, Button sellButton) {
+    public void showSellPropertyDialog(ComboBox<Ownable> comboBox, Button sellButton) {
         LOGGER.info("Show sell property dialog.");
 
         VBox vbox = new VBox();
