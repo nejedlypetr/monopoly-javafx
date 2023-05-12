@@ -209,7 +209,8 @@ public class Player {
         LOGGER.info(name+" change money balance by "+amount);
 
         if ((-amount) > money.getValue()) {
-            autoSellProperties(-amount);
+            int moneyNeeded = -(money.getValue() + amount);
+            autoSellProperties(moneyNeeded);
         }
 
         if ((money.get() + amount) < 0) {
@@ -222,7 +223,7 @@ public class Player {
     }
 
     private void autoSellProperties(int moneyNeeded) {
-        LOGGER.info("Run auto-sell properties.");
+        LOGGER.info("Run auto-sell properties. Money needed: " + moneyNeeded);
 
         int moneyGained = 0;
         int totalOwnedSquares = ownedSquares.size();
