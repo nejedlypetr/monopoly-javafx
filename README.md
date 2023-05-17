@@ -26,7 +26,7 @@ Dependencies automatically maintained by **Maven**:
 
 ## Usage
 1. Clone the repository.
-2. Navigate to the *nejedpe4/monopoly* directory: `$ cd nejedpe4/monopoly`
+2. Navigate to the *monopoly-javafx/monopoly* directory: `$ cd monopoly-javafx/monopoly`
 3. Start the application: `$ mvn clean javafx:run`<br>
 
 Alternatively, use an IDE of your choice and set a run configuration.
@@ -113,4 +113,4 @@ The application follows the MCV architecture for better organization and flexibi
 <img src="data-object-model.png" alt="data object model">
 
 ***
-**Note:** The Monopoly JavaFX application was my semester project for the subject "Programming in JAVA" (B0B36PJV) at CTU in Prague.
+**Note:** The JavaFX Monopoly board game was my semester project for the subject "Programming in JAVA" (B0B36PJV) at CTU in Prague.
