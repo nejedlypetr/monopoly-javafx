@@ -4,7 +4,7 @@ The application is written in Java and features a GUI written in JavaFX.
 
 <img src="monopoly-menu.png" alt="monopoly menu">
 <p align="center">
-    <img align="center" width=512 alt="game demo" src="monopoly-demo.gif">
+    <img align="center" width=990 alt="game demo" src="monopoly-demo.gif">
 </p>
 
 ## Table of Contents
@@ -81,7 +81,7 @@ Secondly, run the compiled application with a selected `<log-level>`:
 ```shell
 $ mvn exec:java -Dexec.mainClass=cz.cvut.fel.pvj.nejedly.monopoly.Main -Dexec.args="<log-level>"
 ```
-The logs can be found in `nejedpe4/monopoly/log.txt`.
+The logs can be found in `monopoly-javafx/monopoly/log.txt`.
 
 ## Save game file format
 The application enables you save and load a game. An example of `saved-game.json` file.
