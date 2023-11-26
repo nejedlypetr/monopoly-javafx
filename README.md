@@ -3,8 +3,13 @@ This project is a recreation of the classic Monopoly board game.<br>
 The application is written in Java and features a GUI written in JavaFX.
 
 <img src="monopoly-menu.png" alt="monopoly menu">
+<p align="center">
+    <img align="center" width=512 alt="game demo" src="monopoly-demo.gif">
+</p>
 
 ## Table of Contents
+- [Monopoly JavaFX](#monopoly-javafx)
+  - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
   - [Game features](#game-features)
